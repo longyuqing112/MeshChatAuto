@@ -1,0 +1,598 @@
+
+message_tests: # 普通消息测试组
+  - name: "短消息_点击发送"
+    messages: [ "短消息" ]
+    send_method: "click"
+#
+  - name: "长消息_回车发送"
+    messages: [ "长度消息中等长度消息中等长度消息中等长度消息中等长度消息" ]
+    send_method: "enter"
+
+  - name: "特殊字符_点击发送"
+    messages: [ "特殊!@#$%^&*()" ]
+    send_method: "click"
+
+  - name: "多消息_send发送"
+    messages: [ "消息1", "消息2","消息3" ]
+    send_method: "click"
+#
+  - name: "多消息_enter发送"
+    messages: [ "消息1", "消息2","消息3" ]
+    send_method: "enter"
+
+  - name: "给好友发送多条信息_顶部搜索"
+    messages: [ "搜索好友发消息1", "搜索好友发消息2","搜索好友发消息3" ]
+    send_method: "click"
+    target_phone: "18378056217"
+    target: "friend"
+#
+  - name: "给好友发送单条信息_会话列表查找好友"
+    messages: [ "会话列表中找到好友——检测消息" ]
+    send_method: "click"
+    target_phone: "19924351151"
+    target: "session_list"
+
+  - name: "给好友发送单条信息_contacts菜单内已存在好友列表"
+    messages: [ "contacts菜单内已存在好友列表——检测消息" ]
+    send_method: "click"
+    target_phone: "LYQ"
+    target: "contacts_list"
+
+operation_tests:
+  # 新增键盘组合键测试
+  - name: "键盘操作_全选复制粘贴"
+    messages: ["键盘_混合全选复制粘贴_测试文本"]
+    operations:
+      -   "select_all"
+      -   "copy"
+      -   "paste"
+    send_method: "enter"
+
+  # 新增右键菜单测试
+  - name: "右键操作_剪切粘贴"
+    messages: ["右键_混合全选剪切粘贴_测试文本"]
+    operations:
+      - "right_click:select_all"
+      - "right_click:cut"
+      - "right_click:paste"
+    send_method: "click"
+
+  - name: "右键操作_全选复制粘贴"
+    messages: ["右键_混合全选复制粘贴_测试文本"]
+    operations:
+      - "right_click:select_all"
+      - "right_click:copy"
+      - "right_click:paste"
+    send_method: "click"
+
+emoji_tests:
+  - name: "发送单个表情_愤怒表情"
+    emoji_names: ["anger"]  # 使用文件名关键部分
+    send_method: "click"
+    target_phone: "18378056217"
+    target: "friend"
+    expected: # 新增预期结果
+      count: 1
+      sequence: [ "anger" ]
+
+  - name: "发送组合表情_静默+开心"
+    emoji_names: ["smile", "emo","hot","love"]
+    send_method: "click"
+    target_phone: "18378056217"
+    target: "friend"
+    expected: # 新增预期结果
+      count: 1
+      sequence: [ "smile", "emo","hot","love" ]
+
+
+
+#  - name: "发送组合w文字_静默+开心"
+#    emoji_names: [ "silent", "happy","silent","happy" ]
+#    send_method: "click"
+#    target_phone: "18378056217"
+#    target: "friend"
+
+media_tests:
+  - name: "发送docx文档"
+    file_path:
+      - "src/files/document.docx"
+    expected_type: "file"
+    target: "friend"
+    target_phone: "19924351151"
+
+  - name: "发送jpg图片"
+    file_path:
+      - "src/imgs/1.jpg"
+    expected_type: "image"
+    target: "friend"
+    target_phone: "19924351151"
+##
+  - name: "发送MP4视频"
+    file_path:
+      - "src/video/1.mp4"
+    expected_type: "video"
+    timeout: 45  # 视频上传需要更长时间
+    target: "friend"
+    target_phone: "19924351151"
+##
+  - name: "发送PNG图片"
+    file_path:
+      - "src/imgs/sample.png"
+    expected_type: "image"
+    target: "friend"
+    target_phone: "19924351151"
+#  - name: "发送大文件(50MB+)"
+#    file_path: "test_data/large_file.zip"
+#    expected_type: "file"
+#    timeout: 120  # 大文件需要更长超时
+
+share_card_tests:
+  # 基础场景
+  - name: "顶部搜索勾选单人_精确手机号"
+    select_type: "search"  # 区分搜索/列表操作
+    search_queries: ["小一"]
+    multi_select: false  # 是否多选场景
+    target_phone: "19924351151"
+    expected:
+      selected_count: 1
+      card_content: "用户A的名片"  # 预期分享的名片内容
+
+  # 混合搜索场景
+  - name: "顶部搜索勾选多人_混合搜索"
+    select_type: "search"
+    search_queries: ["LYQ", "18378056217"]  # 支持混合用户名/手机号搜索
+    multi_select: true
+    target_phone: "19924351151"
+    expected:
+      selected_count: 2
+      card_content: "用户B的名片"
+
+  # 列表直接勾选场景
+  - name: "直接列表勾选多人"
+    select_type: "list"
+    search_queries: ["19924351151",'小一']  # 空表示不执行搜索
+    multi_select: true
+    target_phone: "18378056217"
+    expected:
+      selected_count: 2
+      card_content: "用户C的名片"
+
+  - name: "直接列表勾选单人"
+    select_type: "list"
+    search_queries: [ "18378056217" ]  # 空表示不执行搜索
+    multi_select: true
+    target_phone: "LYQ"
+    expected:
+      selected_count: 2
+      card_content: "用户C的名片"
+
+  - name: "取消分享_验证无消息发送"
+    operation_type: "cancel"  # 新增操作类型标识
+    select_type: "list"
+    search_queries: [ "小一"]  # 空表示不执行搜索
+    multi_select: true
+    target_phone: "LYQ"
+    expected:
+      selected_count: 1    # 初始勾选数量
+
+  - name: "清空已勾选好友_逐个清除"
+    operation_type: "clear"  # 新增操作类型标识
+    select_type: "list"
+    search_queries: [ "18378056217","LYQ","小一" ]  # 空表示不执行搜索
+    multi_select: true
+    target_phone: "19924351151"
+    expected:
+      initial_selected: 3    # 初始勾选数量
+      cleared_selected: 0     # 清空后数量
+      confirm_disabled: true  # 确认按钮状态
+
+reply_tests:
+  - name: "文本消息回复测试"
+    target: "friend"
+    target_phone: "18378056217"     # 目标好友手机号
+    original_messages: ["Hello"]  # 先发送的原消息
+    reply_text: "This is my reply"  # 回复内容
+    expected:
+      contains_original: true  # 回复中应包含原消息
+
+  - name: "取消引用的回复测试"
+    target: "friend"
+    target_phone: "18378056217"     # 目标好友手机号
+    original_messages: [ "Hello2" ]  # 先发送的原消息
+    reply_text: "Reply after cancel quote"  # 回复内容
+    cancel_quote: true  # 测试步骤：执行取消引用操作
+    expected:
+      contains_original: false # 验证引用不存在
+  - name: "图片消息回复测试"
+    target: "friend"
+    target_phone: "18378056217"
+    original_messages:
+      - type: "image"
+        path: "src/imgs/1.jpg"  # 图片路径
+    reply_text: "这是图片回复"
+    expected:
+      contains_original: true
+
+  - name: "视频消息回复测试"
+    target: "friend"
+    target_phone: "18378056217"
+    original_messages:
+      - type: "video"
+        path: "src/video/1.mp4"  # 视频路径
+    reply_text: "这是视频回复"
+    expected:
+      contains_original: true
+
+  - name: "文件消息回复测试"
+    target: "friend"
+    target_phone: "18378056217"
+    original_messages:
+      - type: "file"
+        path: "src/files/document.docx"  # 文件路径
+    reply_text: "这是文件回复"
+    expected:
+      contains_original: true
+
+
+  - name: "语音消息回复测试"
+    target: "friend"
+    target_phone: "18378056217"
+    original_messages:
+      - type: "voice"
+        duration: 3  # 语音时长
+    reply_text: "这是语音回复"
+    expected:
+      contains_original: true
+
+forward_message_tests:
+  - name: "转发文本消息_单人_搜索19924351151"
+    message_content: ["Hello转发消息_单人"]
+    search_queries: ["小一"]
+    target: "friend"
+    target_chat: "19924351151"
+    operation_type: "confirm"
+    select_type: "search"
+    expected:
+      content: "Hello转发消息_单人"
+
+  - name: "转发文本消息_多人_搜索18378056217"
+    message_content: [ "Hello转发消息_多人" ]
+    search_queries: [ "19924351151","LYQ" ]
+    target: "friend"
+    target_chat: "18378056217"
+    operation_type: "confirm"
+    select_type: "search"
+    expected:
+      content: "Hello转发消息_多人"
+  - name: "直接勾选转发文本消息_多人_直接勾选LYQ"
+    message_content: [ "Hello转发消息_多人_直接勾选" ]
+    search_queries: [ "19924351151","18378056217" ]
+    target: "friend"
+    target_chat: "LYQ"
+    operation_type: "confirm"
+    select_type: "list"
+    expected:
+      content: "Hello转发消息_多人"
+
+  - name: "取消转发测试"
+    message_content: [ "Hello2取消转发" ]  # 先发送的原消息
+    search_queries: [ "LYQ","18378056217" ]
+    target: "friend"
+    target_chat: "19924351151"     # 目标好友手机号
+    operation_type: "cancel"  # 测试步骤：执行取消引用操作
+
+  - name: "转发消息清空已勾选好友_逐个清除"
+    message_content: ["测试清空功能"]
+    select_type: "list"
+    search_queries: [ "19924351151","小一" ]  # 空表示不执行搜索
+    target: "friend"
+    target_chat: "19924351151"
+    operation_type: "clear"  # 新增操作类型标识
+    expected:
+      initial_selected: 2    # 初始勾选数量
+      cleared_selected: 0     # 清空后数量
+      confirm_disabled: true  # 确认按钮状态
+
+  - name: "转发图片消息_单人"
+    message_content: # 改为列表
+      - path: "src/imgs/1.jpg"
+    media_type: "image"  # 新增类型标识
+    search_queries: [ "小一" ]
+    target: "friend"
+    target_chat: "19924351151"
+    operation_type: "confirm"
+    select_type: "list"
+
+  - name: "转发视频消息_单人"
+    message_content: # 改为列表
+      - path: "src/video/1.mp4"
+    media_type: "video"  # 新增类型标识
+    search_queries: [ "小一" ]
+    target: "friend"
+    target_chat: "19924351151"
+    operation_type: "confirm"
+    select_type: "list"
+
+  - name: "转发文件消息_单人"
+    message_content: # 改为列表
+      - path: "src/files/document.docx"
+    media_type: "file"  # 新增类型标识
+    search_queries: [ "小一" ]
+    target: "friend"
+    target_chat: "19924351151"
+    operation_type: "confirm"
+    select_type: "list"
+
+  - name: "表情转发"
+    message_content: [ "smile", "emo","hot","love" ]
+    media_type: "emoji"  # 新增类型标识
+    search_queries: [ "小一" ]
+    operation_type: "confirm"
+    target_chat: "18378056217"
+    select_type: "list"
+    target: "friend"
+    expected: # 新增预期结果
+      count: 1
+      sequence: [ "smile", "emo","hot","love" ]
+
+
+select_message_tests:
+  - name: "选择转发消息"
+    message_content: ["选择1","选择2"]
+    search_queries: ["19924351151"]
+    target: "friend"
+    target_chat: "18378056217"
+    operation_type: "confirm"
+    select_type: "list"
+    select_count: 2
+#
+
+  - name: "选择转发消息"
+    message_content: [ "单条消息——选择1" ]
+    search_queries: [ "19924351151" ]
+    target: "friend"
+    target_chat: "18378056217"
+    operation_type: "confirm"
+    select_type: "list"
+    select_count: 1
+
+  - name: "删除勾选单条消息"
+    message_content: [ "删除勾选的消息——删除1" ]
+    search_queries: [ "19924351151" ]
+    target: "friend"
+    target_chat: "18378056217"
+    operation_type: "delete"
+    select_type: "list"
+    select_count: 1
+#
+  - name: "删除多条消息"
+    message_content: [ "勾选多条消息——删除1","勾选多条消息——删除2" ]
+    search_queries: [ "19924351151" ]
+    target: "friend"
+    target_chat: "18378056217"
+    operation_type: "delete"
+    select_type: "list"
+    select_count: 2
+
+  - name: "取消选择"
+    message_content: [ "取消选择" ]
+    search_queries: [ "19924351151" ]
+    target: "friend"
+    target_chat: "18378056217"
+    operation_type: "cancel"
+    select_type: "list"
+    select_count: 1
+
+delete_message_tests:
+  - name: "确认删除消息"
+    message_content: [ "纯删除消息" ]
+    search_queries: [ "19924351151" ]
+    target: "friend"
+    target_chat: "18378056217"
+    select_type: "list"
+    operation_type: "confirm"
+    select_count: 1
+
+  - name: "删除多条消息"
+    message_content: [ "纯删除消息1111" ]
+    search_queries: [ "19924351151" ]
+    target: "friend"
+    operation_type: "cancel"
+    target_chat: "18378056217"
+    select_type: "list"
+    select_count: 2
+
+recall_message_tests:
+  - name: "撤回文本消息"
+    message_content: [ "撤回文本消息" ]
+    target: "friend"
+    target_chat: "18378056217"
+    media_type: "text"
+
+  - name: "撤回视频消息"
+    message_content:
+      - path: "src/video/1.mp4"
+    target: "friend"
+    target_chat: "18378056217"
+    media_type: "video"
+
+  - name: "撤回图片消息"
+    message_content:
+      - path: "src/imgs/1.jpg"
+    target: "friend"
+    target_chat: "18378056217"
+    media_type: "image"
+
+  - name: "撤回文件消息"
+    message_content:
+      - path: "src/files/document.docx"
+    target: "friend"
+    target_chat: "18378056217"
+    media_type: "file"
+
+  - name: "撤回表情消息"
+    message_content: [ "smile", "emo","hot","love" ]
+    target: "friend"
+    target_chat: "18378056217"
+    media_type: "emoji"
+
+  - name: "撤回语音消息"
+    target: "friend"
+    target_chat: "18378056217"
+    media_type: "voice"
+    message_content:
+      - type: "voice"
+        duration: 3  # 语音时长
+    expected:
+      contains_original: true
+
+  - name: "撤回名片消息"
+    target: "friend"
+    message_content: [ "LYQ" ]
+    target_chat: "18378056217"
+    media_type: "card"
+    multi_select: true
+
+edit_message_tests:
+  - name: "编辑消息"
+    target: "friend"
+    message_content: [ "编辑消息" ]
+    new_content: ["编辑后的新内容"]
+    target_chat: "18378056217"
+
+  - name: "取消编辑消息"
+    target: "friend"
+    message_content: [ "取消编辑消息" ]
+    new_content: ["取消编辑——新内容"]
+    target_chat: "18378056217"
+    operation_type: "cancel"
+
+copy_message_tests:
+  - name: "复制文本消息"
+    target: "friend"
+    message_content: [ "复制文本消息" ]
+    target_chat: "18378056217"
+    media_type: "text"
+    operations:
+      - "right_click:paste"
+    send_method: "click"
+##
+  - name: "复制图片消息"
+    target: "friend"
+    message_content:
+      - path: "src/imgs/1.jpg"
+    target_chat: "18378056217"
+    operations:
+      - "right_click:paste"
+    send_method: "click"
+    media_type: "image"
+##
+  - name: "复制视频消息"
+    target: "friend"
+    message_content:
+      - path: "src/video/1.mp4"
+    target_chat: "18378056217"
+    operations:
+      - "right_click:paste"
+    send_method: "click"
+    media_type: "video"
+
+  - name: "复制文件消息"
+    target: "friend"
+    message_content:
+      - path: "src/files/document.docx"
+    target_chat: "18378056217"
+    operations:
+      - "right_click:paste"
+    send_method: "click"
+    media_type: "file"
+
+  - name: "复制表情消息"
+    target: "friend"
+    message_content: [ "smile", "emo","love" ]
+    target_chat: "18378056217"
+    operations:
+      - "right_click:paste"
+    send_method: "click"
+    media_type: "emoji"
+
+
+
+
+#  - name: "语音消息回复测试"
+#    target: "friend"
+#    target_phone: "18378056217"
+#    original_messages:
+#      - type: "voice"
+#        duration: 3  # 语音时长
+#    reply_text: "这是语音回复"
+#    expected:
+#      contains_original: true
+#add_friend_tests:
+#  - name: "通过菜单添加好友-id号"
+#    method: "menu"
+#    identifier_type: "id"
+#    identifier: "hhhhhhh94"
+#    expected: "success"
+#
+#  - name: "通过另一个页面添加好友-id号"
+#    method: "global"
+#    identifier_type: "id"
+#    identifier: "hhhhhhh94"
+#    expected: "success"
+#
+#  - name: "通过另一个页面添加好友-手机号"
+#    method: "global"
+#    identifier_type: "id"
+#    identifier: "18670307536"
+#    expected: "success"
+#
+#  - name: "通过另一个页面添加好友-id"
+#    method: "global"
+#    identifier_type: "id"
+#    identifier: "ZLS9hI1354"
+#    expected: "success"
+#
+#accept_friend_tests:
+#  - name: "拒绝好友邀请"
+#    identifier_type: "phone"
+#    identifier: "19924351151"
+#    action: "reject"
+#
+#  - name: "同意好友邀请"
+#    identifier_type: "phone"
+#    identifier: "19924351151"
+#    action: "accept"
+
+multi_account_login:
+  - name: "通过另一个页面添加好友-id"
+    method: "global"
+    env: "Local"
+    terms: true
+    identifier_type: "id"
+    identifier: "{{ ID }}"
+    username: "19911111111"
+    password: "111111a"
+    expected: "success"
+    role: "sender"
+
+  - name: "通过另一个页面添加好友-phone"
+    method: "global"
+    env: "Local"
+    terms: true
+    identifier_type: "phone"
+    username : "15000000000"
+    password: "111111a"
+    expected: "success"
+    role: "receiver_b"
+
+  - name: "通过另一个页面添加好友-id"
+    method: "global"
+    env: "Local"
+    terms: true
+    identifier_type: "id"
+    username: "ZLS9hI1354"
+    password: "ZLS9hI1354"
+    expected: "success"
+    role: "receiver_c"
+#

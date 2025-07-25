@@ -1,0 +1,15 @@
+# tests/data/login_test_data_v2.yaml
+test_suites:
+
+  username_password:
+    - name: "成功登录"
+      env: "Local"
+      firm: "MESH"
+      username: "{{ USERNAME }}"
+      password: "{{ PASSWORD }}"
+      remember: true
+      terms: true
+      expected:
+        alert_expected: ""
+
+

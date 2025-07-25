@@ -1,0 +1,8 @@
+{
+  "electron_app_path": "D:\\jane\\maishi\\Chat\\MeshChat\\MeshChat.exe",
+  "chromedriver_path": "C:\\Program Files\\Google\\Chrome\\Application\\chromedriver-win64\\chromedriver.exe",
+  "CREDENTIALS" : {
+    "correct_username": "19911111111",
+    "correct_password": "111111a"
+}
+}

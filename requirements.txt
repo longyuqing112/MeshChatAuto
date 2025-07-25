@@ -1,0 +1,11 @@
+pytest
+pywinauto
+selenium
+pytest-selenium
+pyyaml
+pyperclip
+pyautogui
+numpy
+opencv-python
+redis
+pymongo
