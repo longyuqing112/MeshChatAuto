@@ -38,24 +38,27 @@ def test_msg_reply(driver,test_case,auto_login):
     action_page = MsgActionsPage(driver)
     msg_page.open_chat_session(target=test_case['target'], phone=test_case['target_phone'],)
     # 获取消息类型
-    msg_type = test_case.get('original_messages')
-
+    # msg_type = test_case.get('original_messages')
+    msg_type = test_case['original_messages']
     # 1. 先发送原始消息
     if isinstance(test_case['original_messages'][0], str):
         msg_type = 'text'
-        msg_page.send_multiple_message(test_case['original_messages'])
+        msg_page.send_multiple_message(test_case.get('original_messages'))
+        print('获取引用的内容：', test_case.get('original_messages'))
     else:# 媒体消息
         media_data = test_case['original_messages'][0]
         msg_type = media_data['type']
-        if msg_type == 'voice':
-            msg_page.send_voice_message(record_seconds=media_data['duration'])
-        else:
-            # 修正文件路径为绝对路径
-            file_path = os.path.abspath(os.path.join(src_dir, media_data['path']))
-            msg_page.send_media_messages(
-                file_paths=[file_path],
-                media_type=msg_type
-            )
+        #————————————meshchat没有语音消息——————————
+        # if msg_type == 'voice':
+        #     msg_page.send_voice_message(record_seconds=media_data['duration'])
+        # else:
+        # ————————————meshchat没有语音消息——————————
+        # 修正文件路径为绝对路径
+        file_path = os.path.abspath(os.path.join(src_dir, media_data['path']))
+        msg_page.send_media_messages(
+            file_paths=[file_path],
+            media_type=msg_type
+        )
     expected_contains_original = test_case['expected'].get('contains_original', True)
     cancel_quote = test_case.get('cancel_quote', False,)
 
@@ -71,7 +74,7 @@ def test_msg_reply(driver,test_case,auto_login):
     "test_case",load_test_data(yaml_file_path)['forward_message_tests'],
 )
 def test_forward_friends(driver,test_case):
-    msg_page  = MessageTextPage(driver)
+    msg_page    = MessageTextPage(driver)
     msg_page.open_chat_session(target=test_case['target'], phone=test_case['target_chat'], )
     msg_type = test_case.get('message_content')
     media_type = None  # 👈 默认无媒体类型
@@ -108,6 +111,7 @@ def test_forward_friends(driver,test_case):
     if test_case.get('operation_type') == 'clear':
         # 初始数量断言
         assert result['initial_count'] == test_case['expected']['initial_selected']
+
         # 清除操作和最终状态验证已在 forward_to_message 中完成
 
 @pytest.mark.parametrize(
@@ -155,8 +159,9 @@ def test_recall_msg(driver,test_case):
         )
     elif test_case.get('media_type') == 'text':
         msg_page.send_multiple_message(test_case['message_content'])
-    elif test_case.get('media_type') == 'voice':
-        msg_page.send_voice_message(test_case['message_content'][0]['duration'])
+        #————————————————————没有语音消息
+    # elif test_case.get('media_type') == 'voice':
+    #     msg_page.send_voice_message(test_case['message_content'][0]['duration'])
     elif test_case.get('media_type') == 'card':
         card_page.preare_share_friends(phone=test_case['target_chat'])
         card_page.select_friends( search_queries=test_case['message_content'], select_type="list")
@@ -178,19 +183,22 @@ def test_recall_msg(driver,test_case):
         media_type = test_case["media_type"]
     )
 
-@pytest.mark.parametrize(
-    "test_case", load_test_data(yaml_file_path)['edit_message_tests'],
-)
-def test_edit_msg(driver, test_case):
-    msg_page = MessageTextPage(driver)
-    msg_page.open_chat_session(target=test_case['target'], phone=test_case['target_chat'])
-    msg_page.send_multiple_message(test_case['message_content'])
-    # 执行编辑操作
-    action_page = MsgActionsPage(driver)
-    action_page.edit_to_msg(
-        new_content = test_case["new_content"],
-        operation_type = test_case.get("operation_type", "confirm"),  # 设置默认值
-    )
+#———————————————meshchat没有消息编辑————————————
+
+# @pytest.mark.parametrize(
+#     "test_case", load_test_data(yaml_file_path)['edit_message_tests'],
+# )
+# def test_edit_msg(driver, test_case):
+#     msg_page = MessageTextPage(driver)
+#     msg_page.open_chat_session(target=test_case['target'], phone=test_case['target_chat'])
+#     msg_page.send_multiple_message(test_case['message_content'])
+#     # 执行编辑操作
+#     action_page = MsgActionsPage(driver)
+#     action_page.edit_to_msg(
+#         new_content = test_case["new_content"],
+#         operation_type = test_case.get("operation_type", "confirm"),  # 设置默认值
+#     )
+#———————————————meshchat没有消息编辑————————————
 
 @pytest.mark.parametrize(
     "test_case", load_test_data(yaml_file_path)['copy_message_tests'],
@@ -223,6 +231,7 @@ def test_copy_msg(driver, test_case):
         media_type = media_type,
         file_paths = file_paths
     )
+
 
 
 

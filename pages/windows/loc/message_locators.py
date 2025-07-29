@@ -1,8 +1,8 @@
 from selenium.webdriver.common.by import By
 #个人头像
-MY_AVATAR =(By.XPATH,'//*[@id="app"]/main[2]/aside/article[1]')
-AVATAR_MENU=(By.XPATH,'//*[@id="app"]/main[2]/aside/main')
-AVATAR_MESSAGE_Button=(By.XPATH,'//*[@id="app"]/main[2]/aside/main/article[2]/div[2]/span')
+MY_AVATAR =(By.XPATH,'//article[@class="avatar h-fit cursor-pointer"]')
+AVATAR_MENU=(By.XPATH,'//main[@class="friend-detail"]')
+AVATAR_MESSAGE_Button=(By.XPATH,'//section[@class="btn"][div/text()="Message"]')
 #输入文本内容
 TEXTAREA_INPUT = (By.XPATH,"//div[contains(@id, 'w-e-textarea')]")
 TEXTAREA_INPUT2 = (By.CSS_SELECTOR, "div.editor-content[data-w-e-textarea] > div.w-e-text-container [contenteditable='true']")
@@ -10,7 +10,7 @@ Message_Send = (By.XPATH,"//footer//button[contains(@class,'el-button')]") #发�
 #登入后的手机号
 PHONE_LOC = (By.CSS_SELECTOR,'.name.line-clamp-2.select-text')
 # CURRENT_WINDOW_PHONE=(By.XPATH,'//article[@class="header"]//p[@class="truncate"]')
-CURRENT_WINDOW_PHONE=(By.XPATH,"//article[@class='header']//div[@class='header-title-left no-select no-drag']/p[@class='truncate' or contains(@class, 'max-w')]")
+CURRENT_WINDOW_PHONE=(By.XPATH,"//*[@id='chat-header']/section/div/p[1]")
 
 #检查单聊中是否存在该消息
 CHAT_MESSAGE = (By.XPATH,'#chat-message') #聊天窗口
@@ -29,7 +29,7 @@ SEARCH_INPUT =(By.CSS_SELECTOR,"input.el-input__inner[placeholder='Search']")
 SEARCH_SECTION = (By.CSS_SELECTOR,".el-scrollbar.searchInfo.no-select") #弹窗出现
 
 #发消息给好友 -回话列表中查找
-SESSION_LIST = (By.CSS_SELECTOR,"article.flex-1.overflow-y-auto") # 会话列表容器
+SESSION_LIST = (By.CSS_SELECTOR,"div.el-scrollbar .call-back") # 会话列表容器
 SESSION_ITEMS = (By.CSS_SELECTOR,"div.no-select.item") #单个会话项
 SESSION_PHONE = (By.CSS_SELECTOR, ".item-content-header-title .truncate")  # 会话中的手机号
 
@@ -51,19 +51,21 @@ DIALOG_FILE =(By.CSS_SELECTOR, "//div[contains(@class,'el-dialog__body') and .//
 DIALOG_FILE_CONFIRM = (By.XPATH,"/html/body/div[1]/main[2]/article/main/article/main/div[2]/div/div/div/section/button[2]/span")
 # DIALOG_FILE_CONFIRM = (By.CSS_SELECTOR,"//div[@role='dialog']//button[span[text()='Confirm']]")
 
+
+
 #确认媒体消息出现在单聊ui上面
 MESSAGE_CONTAINER = (By.CSS_SELECTOR, ".chat-item-box") # 所有消息的公共父容器
 FILE_CONTAINER = (By.CSS_SELECTOR, ".chat-item-box .chat-item-content .file") #文件容器
 FILE_NAME = (By.CSS_SELECTOR, ".file-name") #文件名称
 # VIDEO_CONTAINER= (By.CSS_SELECTOR,".chat-item-box .chat-item-content .video")
-VIDEO_CONTAINER= (By.CSS_SELECTOR,".video")
+VIDEO_CONTAINER= (By.CSS_SELECTOR,"div.video")
 # IMAGE_CONTAINER= (By.CSS_SELECTOR,".chat-item-box .chat-item-content .img")
-IMAGE_CONTAINER= (By.CSS_SELECTOR,".img")
+IMAGE_CONTAINER= (By.CSS_SELECTOR,"img[src*='Image']")
 
 #发送表情消息
 EMOJI_ICON = (By.CSS_SELECTOR, ".icon-emoji") # 表情自定义图标
 # EMOJI_POPUP_SELECTOR = (By.CSS_SELECTOR,'div.el-popper[role="tooltip"]')  # 表情弹框容器
-EMOJI_POPUP_SELECTOR = (By.CSS_SELECTOR,'div.el-popper[role="tooltip"] main article:nth-of-type(2)')  # 表情弹框容器
+EMOJI_POPUP_SELECTOR = (By.CSS_SELECTOR,'div.el-popper[role="tooltip"]')  # 表情弹框容器
 EMOJI_ICON_SELECTOR = (By.CSS_SELECTOR,'article[data-v-43a55c74] section > section img')  # 所有表情
 
 #语音消息
@@ -93,7 +95,7 @@ HOME_ICON = (By.CSS_SELECTOR,"article.tool-icons > section:nth-child(1)")
 
 #————————消息操作
 #消息引用
-MSG_ACTIONS_REPLY = (By.XPATH,".//span[text()='Reply']")
+MSG_ACTIONS_QUOTE = (By.XPATH,".//span[text()='Quote']")
 QUOTE_BOX = (By.XPATH,"//article[contains(@class, 'quote-box')]")
 QUOTE_BOX_USER = (By.XPATH,"//div[@class='flex-shrink-0']")#可通QUOTE_BOX去找USER
 QUOTE_BOX_MSG = (By.XPATH,"//article[contains(@class, 'truncate')]")#可通QUOTE_BOX去找MSG
@@ -123,11 +125,12 @@ MSG_READ_STATUS = (By.CSS_SELECTOR, ".icon-read")
 SUCCESS_STATUS_FLAGS = ["read-none", "read-over"]
 
 #——————————消息选择
-MSG_ACTIONS_SELECT = (By.XPATH,".//span[text()='Select']")
-CHECK_ELEMENT = (By.CSS_SELECTOR,"article.chat-item.items-center.isMe > div.check")
-SELECT_FORWARD = (By.CSS_SELECTOR,'article.redirection-item:nth-child(1)')
-SELECT_DELETE = (By.CSS_SELECTOR,'article.redirection-item:nth-child(2)')
-SELECT_CLOSE = (By.CSS_SELECTOR,'footer.redirection > article:nth-child(3)')
+MSG_ACTIONS_MULTIPLE = (By.XPATH,".//span[text()='Multiple']")
+CHECK_ELEMENT = (By.CSS_SELECTOR,"article.chat-item.isMe > div.check")
+SELECT_FAVORITE = (By.CSS_SELECTOR,'article.redirection-item:nth-child(1)')
+SELECT_FORWARD = (By.CSS_SELECTOR,'article.redirection-item:nth-child(2)')
+SELECT_DELETE = (By.CSS_SELECTOR,'article.redirection-item:nth-child(3)')
+SELECT_CLOSE = (By.CSS_SELECTOR,'footer .cursor-pointer')
 MESSAGE_ITEM = (By.CSS_SELECTOR,"")
 CHAT_TIME = (By.CSS_SELECTOR,"div.chat-item-box span.opacity-50")
 CONFIRM_SELECT_DELETE = (By.CSS_SELECTOR,".el-dialog__body .el-button--primary")
@@ -144,10 +147,14 @@ EDIT_TIP = (By.CSS_SELECTOR,".text-red-500")
 MSG_ACTIONS_COPY = (By.XPATH,".//span[text()='Copy']")
 #————————删除好友请求数据
 DELETE_ICON = (By.CSS_SELECTOR,".header-right > i")
-LEFT_NEW_FRIEND = (By.XPATH,".//div[@class='card-left'][text()='New Friends']")
+# LEFT_NEW_FRIEND = (By.XPATH,".//div[@class='card-left'][text()='New Friends']") 以防tip遮挡
+LEFT_NEW_FRIEND = (By.XPATH,".//div[@class='card-left' and text()='New Friends']/following-sibling::div//i")
 RIGHT_NEW_FRIEND_CONTAINER = (By.XPATH, ".//main[@class='new-friend']")
 FRIEND_REQUEST_LIST  = (By.CSS_SELECTOR, ".newFriend .el-scrollbar__view > div")
 CONFIRM_REQUEST = (By.XPATH, "//div[contains(@class, 'el-dialog__body')]//button[span[text()='Confirm']]")
+
+
+
 #————————————单钩双钩
 double_check_icon = "div[index='{index}'] div > svg path:nth-of-type(2)"
 

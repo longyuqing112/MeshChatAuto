@@ -152,15 +152,18 @@ def test_emoji_message(shared_message_window,test_case,auto_login):
     assert shared_message_window.verify_emoji_message(test_case['expected']['sequence']), \
         "表情消息验证失败"
 
-@pytest.mark.parametrize("test_data", [
-    {"duration": 3, "expected": 3}], ids=["短语音消息"])
-def test_voice_message(shared_message_window, test_data):
-    shared_message_window.open_chat_session(target="friend", phone="18378056217")
-    assert shared_message_window.send_voice_message(record_seconds=test_data['duration']),"录音操作失败"
-    # 复合验证
-    is_success, actual = shared_message_window.verify_voice_message(
-        expected_duration=test_data["expected"]
-    )
-    # 断言结果
-    assert is_success, f"验证失败 | 预期: {test_data['expected']}s 实际: {actual}s"
 
+    #————————————————————meshchat没有语音消息————————————————————————
+
+# @pytest.mark.parametrize("test_data", [
+#     {"duration": 3, "expected": 3}], ids=["短语音消息"])
+# def test_voice_message(shared_message_window, test_data):
+#     shared_message_window.open_chat_session(target="friend", phone="18378056217")
+#     assert shared_message_window.send_voice_message(record_seconds=test_data['duration']),"录音操作失败"
+#     # 复合验证
+#     is_success, actual = shared_message_window.verify_voice_message(
+#         expected_duration=test_data["expected"]
+#     )
+#     # 断言结果
+#     assert is_success, f"验证失败 | 预期: {test_data['expected']}s 实际: {actual}s"
+#

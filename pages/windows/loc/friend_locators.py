@@ -1,16 +1,16 @@
 from selenium.webdriver.common.by import By
-MORE_SETTING=(By.CSS_SELECTOR,'.el-icon.more') #...
-MORE_SETTING_CONTAINER =(By.XPATH,"//div[contains(@class, 'mx-context-menu') and contains(@class, 'light') and contains(@class, 'mx-menu-host')]") #动弹menu
+MORE_SETTING=(By.CSS_SELECTOR,'i.icon-more1.cursor-pointer') #...
+MORE_SETTING_CONTAINER =(By.XPATH,"//div[@class='mx-context-menu' and @data-type='ContextSubMenu']") #动弹menu
 DELETE_CONTACT = (By.XPATH,"//div[contains(@class, 'mx-context-menu')]//span[text()='Delete Contact']") #menuitem 删除
 CONFIRM_DIALOG_DELETE = (By.XPATH, "//div[@class='el-overlay no-drag']//div[@role='dialog' and contains(@class, 'el-overlay-dialog') and .//div[contains(text(), 'Delete Contact')]]")
 CONFIRM_BUTTON = (By.XPATH, "//div[@role='dialog']//button[contains(@class, 'el-button--primary') and contains(., 'Confirm')]")
 
 #加好友—— +菜单栏添加
 CREATE_MENU_BUTTON = (By.XPATH,"//div[@class='no-drag add cursor-pointer']")
-CREATE_MENU_CONTAINER = (By.XPATH,"//div[@class='mx-context-menu  light mx-menu-host']")
+CREATE_MENU_CONTAINER = (By.XPATH,"//div[@data-type='ContextSubMenu']")
 ADD_FRIEND_ITEM = (By.XPATH,"//span[text()='Add Friend']")
 APPLICATION_FRIEND = (By.XPATH,"//main[contains(@class, 'add-friend')]")  #点击添加好友后的申请界面
-SEARCH_FRIEND = (By.XPATH,"//input[@placeholder='Enter Phone Number / SecureNet ID']")
+SEARCH_FRIEND = (By.XPATH,"//input[@placeholder='Enter Phone Number / MeshChat ID']")
 SEARCH_BUTTON = (By.XPATH,"//button[span[text()='Search']]")
 CARD_ITEM = (By.CSS_SELECTOR, "article.card-item")  # 更稳定的CSS选择器#每个card 后面通过这个card去找名字
 USERNAME_IN_CARD = (By.CSS_SELECTOR, ".base .name")  # 手机号专属元素

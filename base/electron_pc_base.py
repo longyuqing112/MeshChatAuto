@@ -99,7 +99,7 @@ class ElectronPCBase:
         )
         # 输入新内容（增加显式焦点操作）
         self.driver.execute_script("arguments[0].focus();", input_element)
-        ActionChains(self.driver).send_keys(new_content[0]).perform()
+        ActionChains(self.driver).send_keys(new_content).perform()
     def base_input_text(self,loc,text):
         # 获取元素(找到这个元素)
         el = self.wait.until(EC.visibility_of_element_located(loc))
@@ -146,6 +146,7 @@ class ElectronPCBase:
         el = self.driver.find_element(*loc)
         return el.text
 
+#——————————————meshchat规避了验证码———————————————————
     # def is_captcha_visible(self,timeout=3):
     #     try:
     #         # 1. 先检查元素是否存在（不关心是否可见）
@@ -166,40 +167,7 @@ class ElectronPCBase:
     #         print("验证码元素不存在")
     #         return False
 
-    def is_captcha_visible(self):
-        try:
-            # 使用显式等待合并存在性与可见性检查
-            captcha_element = self.wait.until(
-                lambda d: d.find_element(By.CSS_SELECTOR, "div.mask")
-            )
-            # 2. 检查内联样式（仅适用于 style="display: none" 的情况）
-            time.sleep(2)
-            if not captcha_element.is_displayed():
-                print("验证码不可见（通过is_displayed判断）")
-                return False
-            if "display: none" in captcha_element.get_attribute("style"):
-                print("验证码当前不可见（通过style判断）")
-                return False
-            # 补充样式检查（处理特殊情况）
-            style = captcha_element.get_attribute("style") or ""
-            if "display: none" in style.lower():
-                print("验证码不可见（通过style验证）")
-                return False
-            print("验证码可见，需要处理")
-            time.sleep(2)
-            return True
-        except TimeoutException:
-            # 捕获元素不存在的情况
-            print("验证码组件未加载")
-            return False
-        except StaleElementReferenceException:
-            # 元素被动态刷新时自动重试
-            print("验证码元素状态刷新，重新检测...")
-            return self.is_captcha_visible()
-        except Exception as e:
-            print(f"验证码检测异常: {str(e)}")
-            return False
-
+   #————————————————————————————————
     # def handle_captcha(self, timeout=6000):
     #     """处理拼图验证"""
     #     if self.is_captcha_visible():
