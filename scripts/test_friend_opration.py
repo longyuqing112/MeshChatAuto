@@ -102,8 +102,10 @@ def test_complete_friend_workflow(driver,auto_login):
         # 3. 当前driver是主测试账号(sender)，无需重新登录
         sender_page = FriendOperationPage(driver)
         # 4. sender添加receiver为好友
-        sender_page.add_via_global_search(receiver_b_account["username"])
-        time.sleep(2)
+        # sender_page.add_via_global_search(receiver_b_account["username"])
+        sender_page.add_via_menu(receiver_b_account["username"])
+
+
 
         # 5. 启动receiver实例
         print("\n=== 启动receiver实例 ===")
@@ -120,8 +122,8 @@ def test_complete_friend_workflow(driver,auto_login):
 
         # 7. sender再次添加receiver为好友
         print("\n=== sender再次发送好友请求 ===")
-        sender_page.add_via_global_search(receiver_b_account["username"])
-
+        # sender_page.add_via_global_search(receiver_b_account["username"])
+        sender_page.add_via_menu(receiver_b_account["username"])
         # 8. receiver接受好友申请
         print("\n=== receiver接受好友请求 ===")
         receiver_b_page.accept_friend_operation(
@@ -179,7 +181,7 @@ def test_complete_friend_workflow(driver,auto_login):
         print("\n=== 双向删除验证成功 ===")
 
         # ===== Test with Receiver C =====
-        print("\n===测试A单项删除B ===")
+        print("\n===测试A单项删除C ===")
         sender_page.delete_friend(
             phone=receiver_c_account["username"],
             confirm=True

@@ -27,7 +27,6 @@ class MultiInstanceManager:
             login_page.login(
                 phonenumber=account_data["username"],
                 password=account_data["password"],
-                env=account_data.get("env", "Local"),
                 remember=account_data.get("remember", True),
                 terms_agree=account_data.get("terms", True)
             )

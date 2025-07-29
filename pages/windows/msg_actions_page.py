@@ -12,13 +12,13 @@ from selenium.webdriver import Keys, ActionChains
 from selenium.common import NoSuchElementException
 
 from pages.windows.card_message_page import CardMessagePage
-from pages.windows.loc.message_locators import MSG_ACTIONS_REPLY, MSG_ACTIONS_FORWARD, \
+from pages.windows.loc.message_locators import MSG_ACTIONS_FORWARD, \
     CHAT_QUOTE_MSG_CITE, QUOTE_BOX_CLOSE, QUOTE_BOX, CHAT_QUOTE_MSG2_BE_CITE_TXT, CHAT_QUOTE_IMG_TH, \
     CHAT_FILE_NAME, FILE_NAME, \
     CHAT_QUOTE_IMG_MP4, RIGHT_ITEM, CONFIRM_SHARE, SESSION_ITEMS, SESSION_ITEM_UPDATES, SESSION_ITEM_UPDATES_TIME, \
-    MSG_READ_STATUS, CANCEL_SHARE, MSG_ACTIONS_SELECT, SELECT_FORWARD, CHECK_ELEMENT, SELECT_DELETE, \
+    MSG_READ_STATUS, CANCEL_SHARE, SELECT_FORWARD, CHECK_ELEMENT, SELECT_DELETE, \
     CONFIRM_SELECT_DELETE, SELECT_CLOSE, MSG_ACTIONS_DELETE, MSG_ACTIONS_RECALL, MSG_ACTIONS_EDIT, EDIT_TIP, \
-    MSG_ACTIONS_COPY
+    MSG_ACTIONS_COPY, MSG_ACTIONS_QUOTE, MSG_ACTIONS_MULTIPLE
 from pages.windows.message_text_page import MessageTextPage
 
 
@@ -47,9 +47,9 @@ class MsgActionsPage(ElectronPCBase):
         )
     def _select_context_menu(self,action):
         menu_item={
-            'Reply': MSG_ACTIONS_REPLY,
+            'Quote': MSG_ACTIONS_QUOTE,
             'Forward': MSG_ACTIONS_FORWARD,
-            'Select': MSG_ACTIONS_SELECT,
+            'Multiple': MSG_ACTIONS_MULTIPLE,
             'Delete': MSG_ACTIONS_DELETE,
             'Recall': MSG_ACTIONS_RECALL,
             'Edit': MSG_ACTIONS_EDIT,
@@ -168,7 +168,7 @@ class MsgActionsPage(ElectronPCBase):
 
         # 右键操作
         ActionChains(self.driver).context_click(context_element).perform()
-        self._select_context_menu("Reply")
+        self._select_context_menu("Quote")
         # latest_msg = latest_element.find_element(By.CSS_SELECTOR,'.whitespace-pre-wrap')
         print('最新消息元素：', context_element)
         # 3. 输入回复内容并发送
@@ -205,8 +205,8 @@ class MsgActionsPage(ElectronPCBase):
             initial_count = result['selected_count']
             # 执行清空
             self.card_page.clear_all_selected_friends()
-            self.card_page.verify_final_state()
-            self.base_click(CANCEL_SHARE)
+            self.card_page._verify_final_state()
+            # self.base_click(CANCEL_SHARE)
             return {
                 'initial_count': initial_count
             }
@@ -323,7 +323,7 @@ class MsgActionsPage(ElectronPCBase):
         latest_element = self._get_latest_message_element()
         context_element = latest_element.find_element(By.CSS_SELECTOR, '.whitespace-pre-wrap')
         ActionChains(self.driver).context_click(context_element).perform()
-        self._select_context_menu('Select')
+        self._select_context_menu('Multiple')
         checkboxes = self._get_visible_checkboxes()
         # 勾选前 select_count 条（从最新开始）
         # 勾选前一条消息
@@ -494,10 +494,10 @@ class MsgActionsPage(ElectronPCBase):
         for op in operations:
             self.msg_page.perform_operation(action_type=op)
             time.sleep(0.5)
-        if media_type == "text" or media_type == "emoji":
-            self.msg_page.send_message()
-        else:
-            self.msg_page.handle_file_upload(timeout=2)
+        # if media_type == "text" or media_type == "emoji":
+        self.msg_page.send_message()
+        # else:
+        #     self.msg_page.handle_file_upload(timeout=2)
         # print("消息索引变化:", before_index, after_index)
         # assert self._verify_copy_result(message_content,media_type,file_paths)
         result, error_message = self._verify_copy_result(message_content, media_type, file_paths)

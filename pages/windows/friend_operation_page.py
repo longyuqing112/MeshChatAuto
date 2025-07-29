@@ -124,60 +124,61 @@ class FriendOperationPage(ElectronPCBase):
                 print("警告：主窗口丢失，切换到第一个可用窗口")
                 self.driver.switch_to.window(current_handles[0])
 
-    def add_via_global_search(self,identifier):
-        main_window = self.driver.current_window_handle
-        self.base_click(SEARCH_INPUT)
-        self.base_input_text(SEARCH_INPUT, str(identifier))
-        self.base_find_element(SEARCH_SECTION)  # 等待选择框出现
-        """通过全局搜索添加好友"""
-        target_card = self.find_and_click_target_card(
-            card_container_loc=FRIEND_CARD_ITEM ,
-            username_loc=FRIEND_NAME_IN_CARD,
-            userid_loc=FRIEND_ID_IN_CARD,
-            target_phone=identifier,
-            context_element=None  # 传入窗口上下文
-        )
-        target_card.click()
-        time.sleep(1)
-
-        self.base_click(HEADER_ADD_FRIEND)
-        #同样出现请求好友新窗口
-        # 2. 使用封装方法切换到添加好友窗口
-        apply_window = self.switch_to_new_window_by_feature(
-            (By.CSS_SELECTOR, "main.apply-friend")
-        )
-        try:
-            self.base_click(SEND_REQUEST_BUTTON)
-            # 5. 等待成功提示
-            WebDriverWait(self.driver, 5).until(
-                EC.visibility_of_element_located(REQUEST_SUCCEED)
-            )
-            print("已确认请求发送成功提示")
-            WebDriverWait(self.driver, 5).until(
-                lambda d: apply_window not in d.window_handles
-            )
-        except Exception as e:
-            print(f"发送请求时出错: {str(e)}")
-            if apply_window in self.driver.window_handles:
-                self.driver.switch_to.window(apply_window)
-                self.driver.close()
-            raise
-
-        except Exception as e:
-            print(f"通过全局搜索添加好友过程中出错: {str(e)}")
-            raise
-
-        finally:
-            # 7. 确保回到主窗口
-            if main_window in self.driver.window_handles:
-                self.driver.switch_to.window(main_window)
-            else:
-                print("警告：主窗口丢失，切换到第一个可用窗口")
-                self.driver.switch_to.window(self.driver.window_handles[0])
+    # def add_via_global_search(self,identifier):
+    #     main_window = self.driver.current_window_handle
+    #     self.base_click(SEARCH_INPUT)
+    #     self.base_input_text(SEARCH_INPUT, str(identifier))
+    #     self.base_find_element(SEARCH_SECTION)  # 等待选择框出现
+    #     """通过全局搜索添加好友"""
+    #     target_card = self.find_and_click_target_card(
+    #         card_container_loc=FRIEND_CARD_ITEM ,
+    #         username_loc=FRIEND_NAME_IN_CARD,
+    #         userid_loc=FRIEND_ID_IN_CARD,
+    #         target_phone=identifier,
+    #         context_element=None  # 传入窗口上下文
+    #     )
+    #     target_card.click()
+    #     time.sleep(1)
+    #
+    #     self.base_click(HEADER_ADD_FRIEND)
+    #     #同样出现请求好友新窗口
+    #     # 2. 使用封装方法切换到添加好友窗口
+    #     apply_window = self.switch_to_new_window_by_feature(
+    #         (By.CSS_SELECTOR, "main.apply-friend")
+    #     )
+    #     try:
+    #         self.base_click(SEND_REQUEST_BUTTON)
+    #         # 5. 等待成功提示
+    #         WebDriverWait(self.driver, 5).until(
+    #             EC.visibility_of_element_located(REQUEST_SUCCEED)
+    #         )
+    #         print("已确认请求发送成功提示")
+    #         WebDriverWait(self.driver, 5).until(
+    #             lambda d: apply_window not in d.window_handles
+    #         )
+    #     except Exception as e:
+    #         print(f"发送请求时出错: {str(e)}")
+    #         if apply_window in self.driver.window_handles:
+    #             self.driver.switch_to.window(apply_window)
+    #             self.driver.close()
+    #         raise
+    #
+    #     except Exception as e:
+    #         print(f"通过全局搜索添加好友过程中出错: {str(e)}")
+    #         raise
+    #
+    #     finally:
+    #         # 7. 确保回到主窗口
+    #         if main_window in self.driver.window_handles:
+    #             self.driver.switch_to.window(main_window)
+    #         else:
+    #             print("警告：主窗口丢失，切换到第一个可用窗口")
+    #             self.driver.switch_to.window(self.driver.window_handles[0])
 
         #————————删除好友请求数据
     def delete_friend_request(self, confirm=False):
         self.open_menu_panel("contacts")
+        time.sleep(2)
         self.base_click(LEFT_NEW_FRIEND)
         self.base_find_element(RIGHT_NEW_FRIEND_CONTAINER)
         self.base_click(DELETE_ICON)
@@ -209,6 +210,7 @@ class FriendOperationPage(ElectronPCBase):
 #——————————接受好友申请
     def accept_friend_operation(self,identifier,action):
         self.open_menu_panel("contacts")
+        self.driver.refresh()  # 方法1：整个页面刷新
         self.base_click(LEFT_NEW_FRIEND)
         self.base_find_element(RIGHT_NEW_FRIEND_CONTAINER)
         target_card = self.find_and_click_target_card(

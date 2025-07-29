@@ -84,10 +84,11 @@ class LoginPage(ElectronPCBase):
 
             # self.handle_captcha()
             # self.is_captcha_visible()
-        if self.is_captcha_visible():
-            print("检测到验证码，请手动处理...")
-        else:
-            print("无验证码，继续执行...")
+        #meshchat规避了验证码
+        # if self.is_captcha_visible():
+        #     print("检测到验证码，请手动处理...")
+        # else:
+        #     print("无验证码，继续执行...")
 
         # 如果协议未被勾选，处理弹窗
         if not terms_agree:
