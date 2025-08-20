@@ -10,6 +10,7 @@ from pages.windows.log_out_page import LogOutPage
 from pages.windows.login_securenet_page import LoginPage
 from utils.app_utils import start_securenet_win_app
 from  selenium.webdriver.support import  expected_conditions as EC
+from pages.windows.msg_actions_page import MsgActionsPage
 
 @pytest.fixture(scope="session")
 def driver():
@@ -70,10 +71,23 @@ def auto_login(request,driver):
         # logout_page.click_confirm()
         yield
 
-
     else:
         # 如果标记为 no_auto_login，则跳过登录
         yield
+
+import pytest
+
+@pytest.fixture(scope="session", autouse=False)
+def clear_favorites_once(driver):
+    action_page = MsgActionsPage(driver)
+    try:
+        success=  action_page.clear_favorites()
+        if not success:
+            print("清空收藏操作返回失败，但继续执行测试")
+        print("收藏列表清空完成")
+    except Exception as e:
+        print(f"清空收藏时发生异常: {e}，继续执行测试")
+
 
 # @pytest.fixture
 # def auto_login(driver, clean_state):

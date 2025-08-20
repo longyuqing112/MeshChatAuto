@@ -13,6 +13,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from  selenium.webdriver.support import  expected_conditions as EC
 from base.electron_pc_base import ElectronPCBase
+from pages.windows.card_message_page import CardMessagePage
 from pages.windows.loc.message_locators import MY_AVATAR, AVATAR_MENU, AVATAR_MESSAGE_Button, TEXTAREA_INPUT, \
     Message_Send, PHONE_LOC, CURRENT_WINDOW_PHONE, ALL_TEXT, ALL_MESSAGE, MENU_ITEMS, SEARCH_INPUT, SEARCH_SECTION, \
     SESSION_LIST, SESSION_ITEMS, SESSION_PHONE, CONTACTS_ICON, CONTACTS_CONTAINER, FRIEND_CARD, SEND_MSG_BUTTON, \
@@ -30,6 +31,7 @@ class MessageTextPage(ElectronPCBase):
         super().__init__()  # 调用父类构造函数
         self.driver = driver  # 设置 driver
         self.wait = WebDriverWait(driver, 10, 0.5)
+        self.card_page = CardMessagePage(self.driver)  # 直接复用已有页面对象
 
 
 
@@ -420,6 +422,7 @@ class MessageTextPage(ElectronPCBase):
             time.sleep(0.5)
 
     def open_chat_session(self,target=None,phone=None):
+        self.card_page.open_menu_panel('home')
         # 如果目标是自己且已经在自己的聊天窗口，则不需要操作
         if self._is_current_chat(phone):
             print(f"当前已在 {phone} 的聊天窗口，无需重新打开")

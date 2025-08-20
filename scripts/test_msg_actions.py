@@ -1,4 +1,8 @@
 import os
+import random
+import string
+import time
+
 import pytest
 
 from pages.windows.card_message_page import CardMessagePage
@@ -12,11 +16,12 @@ yaml_file_path = os.path.abspath(os.path.join(current_dir, "../data/message_data
 
 base_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 src_dir = os.path.abspath(os.path.join(base_dir, "../"))
-
+print(yaml_file_path,'定位路径')
 
 def load_test_data(file_path):
     yaml_utils = YamlConfigUtils(file_path)
     data = yaml_utils.load_yaml_test_data()
+    print("加载的 YAML 数据：", data)  # 👈 打印查看
     return {
         'reply_tests': data.get('reply_tests', []),
         'forward_message_tests': data.get('forward_message_tests', []),
@@ -24,8 +29,14 @@ def load_test_data(file_path):
         'delete_message_tests': data.get('delete_message_tests', []),
         'recall_message_tests': data.get('recall_message_tests', []),
         'edit_message_tests': data.get('edit_message_tests', []),
-        'copy_message_tests': data.get('copy_message_tests', [])
+        'copy_message_tests': data.get('copy_message_tests', []),
+        'favorite_message_tests': data.get('favorite_message_tests', []),
+        'favorite_actions_tests': data.get('favorite_actions_tests', []),
+        'favorite_operations_tests':data.get('favorite_operations_tests', []),
+        'favorite_multiple_tests':data.get('favorite_multiple_tests',[])
     }
+
+
 
 @pytest.mark.parametrize(
     "test_case",
@@ -232,6 +243,138 @@ def test_copy_msg(driver, test_case):
         file_paths = file_paths
     )
 
+
+
+
+@pytest.mark.parametrize(
+    "test_case", load_test_data(yaml_file_path)['favorite_message_tests'],
+)
+def test_favorite_msg(driver, test_case,clear_favorites_once):
+    msg_page = MessageTextPage(driver)
+    action_page = MsgActionsPage(driver)
+    msg_page.open_chat_session(target=test_case['target'], phone=test_case['target_chat'])
+    # 获取唯一标识（新增）成随机test_id（8位字母数字组合
+    test_id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+    # 处理消息内容（保持原有逻辑，仅添加ID标记）
+    media_type = test_case.get('media_type')
+    media_data = test_case['message_content']
+
+    # file_paths = [os.path.abspath(os.path.join(src_dir, m['path'])) for m in media_data] if isinstance(media_data[0],dict) else None
+    # 如果是文本消息，自动添加ID前缀（不影响原有数据）
+    if media_type == 'text' :
+        if isinstance(media_data, list):
+            media_data = [f"[ID:{test_id}] {msg}" for msg in media_data]
+        else:
+            media_data = f"[ID:{test_id}] {media_data}"
+
+    if media_type == 'text':
+        msg_page.send_multiple_message(media_data)
+    elif media_type == 'emoji':
+        msg_page.send_emoji_message(
+            emoji_names=media_data,
+            send_method='click'
+        )
+    else:
+        # 直接提取所有path项（兼容你的YAML格式）
+        file_paths = []
+        for item in media_data:
+            if isinstance(item, dict) and 'path' in item:
+                abs_path = os.path.abspath(os.path.join(src_dir, item['path']))
+                if not os.path.exists(abs_path):
+                    raise FileNotFoundError(f"文件不存在: {abs_path}")
+                file_paths.append(abs_path)
+            elif isinstance(item, str):
+                # 如果是字符串直接作为路径
+                abs_path = os.path.abspath(os.path.join(src_dir, item))
+                if not os.path.exists(abs_path):
+                    raise FileNotFoundError(f"文件不存在: {abs_path}")
+                file_paths.append(abs_path)
+
+        if not file_paths:
+            raise ValueError("未找到有效的文件路径")
+        msg_page.send_media_messages(file_paths, media_type=media_type)
+
+    # 执行——————收藏操作（新增test_id参数但不影响原有方法）
+
+
+    favorite_time,success = action_page.favorite_to_message(
+        message_content=media_data,
+        media_type=media_type,
+        test_id=test_id
+    )
+    assert success, "收藏操作失败"
+
+    # 4. 验证收藏 # 获取关键词用于后续操作
+    if media_type == 'text':
+        keyword = media_data[0]  # 直接是字符串，如 " [ID:htext5eI] 单条--收藏文本消息"
+    elif media_type in ['image', 'video', 'file']:
+        file_path = test_case['message_content'][0]['path']  # 是字典，取 path
+        keyword = os.path.basename(file_path)  # 如 anime.jpg
+    elif media_type == 'emoji':
+        keyword = test_case['message_content']  # 如 "yawn"
+    else:
+        raise ValueError(f"不支持的 media_type: {media_type}")
+
+    expected_src_parts = []
+    for item in media_data:
+        if isinstance(item, dict) and 'path' in item: # filename,ext = os.path.splitext(os.path.basename(item['path'])) 不检验后缀格式了
+            filename = os.path.splitext(os.path.basename(item['path']))[0]
+            # 直接构造完整预期格式（如 "1-thumbnail.jpg"）
+            # expected_src = f"{filename}-thumbnail{ext}" 不检验后缀格式了
+            if media_type in ['image', 'video', 'emoji']:
+                expected_src = f"{filename}-thumbnail"
+            else:
+                expected_src = f"{filename}"
+            expected_src_parts.append(expected_src)  # 如 "1-thumbnail"
+    # 新增验证逻辑
+    time.sleep(3)
+    card_page = CardMessagePage(driver)
+    card_page.open_menu_panel("favorite")
+    assert action_page.verify_result_favorite(media_type= media_type,
+                                              favorite_time= favorite_time,
+                                              test_id= test_id if media_type == 'text' else None,
+                                              expected_src_parts=expected_src_parts,
+                                              expected_emojis = test_case.get('expected', {}).get('sequence', [])
+                                              ), f"收藏验证失败: 未找到{favorite_time}的{media_type}类型收藏项"
+
+    # 5. 执行后续操作
+    for action in test_case.get('actions', []):
+        if action == "view":    # 查看详情
+            action_page.view_favorite_item(
+                media_type=media_type,
+                keyword=keyword,
+                favorite_time=favorite_time
+            )
+        elif action == "forward":  # 转发操作
+            search_queries = test_case.get('search_queries', None)
+            action_page.forward_favorite_item(media_type=media_type,
+                keyword=keyword, favorite_time=favorite_time, search_queries=search_queries)
+        elif  action == "delete":  # 删除操作
+            toast_message =  test_case.get('toast_message', [])
+            action_page.delete_favorite_item(media_type=media_type,
+                                              keyword=keyword, favorite_time=favorite_time,toast_message=toast_message
+                                            )
+    #返回首页备下一个测试
+    time.sleep(1)
+    card_page.open_menu_panel("home")
+
+
+
+@pytest.mark.parametrize(
+    "test_case", load_test_data(yaml_file_path)['favorite_multiple_tests'],
+)
+def test_multiple_msg(driver, test_case):
+    action_page = MsgActionsPage(driver)
+    checks_items = test_case['target_items']
+    action_page.multiple_favorite(
+        checks_items = checks_items,
+        action = test_case['action'],
+        search_queries = test_case['search_queries'],
+        expected = test_case['expected']
+    )
+def test_favorite_categories(driver):
+    action_page = MsgActionsPage(driver)
+    assert action_page.verify_favorite_categories(), "收藏分类验证失败"
 
 
 
