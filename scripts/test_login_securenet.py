@@ -101,86 +101,9 @@ def test_login_number(driver, test_data):
         terms_agree=test_data.get("terms",True)
     )
     asset_login_result(login_page,test_data)
-# #
-
-#
-#
-# # 登录测试用例，不需要自动登录
-# @pytest.mark.no_auto_login
-# @pytest.mark.parametrize("test_data",load_test_data(yaml_file_path)["test_suites"]["environment_selection"])
-# def test_login_securenet(driver, test_data):
-#     """使用 YAML 文件中的测试数据执行登录测试"""
-#     login_page = LoginPage(driver)
-#     login_page.login(
-#         phonenumber=test_data.get("username",""),
-#         password=test_data.get("password",""),
-#         env=test_data.get("env","Local"),
-#         remember=test_data.get("remember",True),
-#         terms_agree=test_data.get("terms",True)
-#     )
-#     asset_login_result(login_page, test_data)
-#
-# #
-# @pytest.mark.order(3)
-# # 登录测试用例，不需要自动登录
-# @pytest.mark.no_auto_login
-# @pytest.mark.parametrize("test_data",load_test_data(yaml_file_path)["test_suites"]["checkbox_combinations"])
-# def test_checkbox_combinations(driver, test_data):
-#         """使用 YAML 文件中的测试数据执行复选框组合测试"""
-#         login_page = LoginPage(driver)
-#         login_page.login(
-#         phonenumber=test_data.get("username", ""),
-#         password=test_data.get("password",""),
-#         env=test_data.get("env", "Local"),
-#         remember=test_data.get("remember", True),
-#         terms_agree=test_data.get("terms", True)
-#         )
-#         time.sleep(1)
-#         asset_login_result(login_page, test_data)
 
 def load_multi_accounts():
     config = ConfigUtils(yaml_file_path).read_config(render_vars=True)
     return config["test_suites"]["multi_account_login"]
 
 
-# @pytest.mark.no_auto_login
-# def test_multi_account_login(driver):
-#     """多账号同时登录测试"""
-#     accounts = load_multi_accounts()
-#     drivers = []
-#     login_page = LoginPage(driver)
-#
-#     try:
-#         # 创建多个实例并登录
-#         for i, account in enumerate(accounts):
-#             driver = login_page.start_app(instance_id=i)
-#             drivers.append(driver)
-#
-#             login_page = LoginPage(driver)
-#             login_page.login(
-#                 phonenumber=account["username"],
-#                 password=account["password"],
-#                 env=account.get("env", "Local"),
-#                 remember=account.get("remember", True),
-#                 terms_agree=account.get("terms", True)
-#             )
-#
-#             # 验证登录成功
-#             login_page.wait.until(
-#                 EC.presence_of_element_located((By.CSS_SELECTOR, "main.h-screen.w-screen.flex"))
-#             )
-#             time.sleep(1)
-#             login_page.handle_close_popup()
-#
-#             print(f"账号 {account['username']} 登录成功")
-#
-#         # 在这里添加多账号交互测试逻辑
-#         time.sleep(5)  # 保持登录状态
-#
-#     finally:
-#         # 确保所有实例都被关闭
-#         for driver in drivers:
-#             try:
-#                 driver.quit()
-#             except:
-#                 pass

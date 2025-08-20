@@ -102,14 +102,14 @@ media_tests:
 
   - name: "发送jpg图片"
     file_path:
-      - "src/imgs/1.jpg"
+      - "src/imgs/anime.jpg"
     expected_type: "image"
     target: "friend"
     target_phone: "19911114444"
 ##
   - name: "发送MP4视频"
     file_path:
-      - "src/video/1.mp4"
+      - "src/video/audio.mp4"
     expected_type: "video"
     timeout: 45  # 视频上传需要更长时间
     target: "friend"
@@ -209,7 +209,7 @@ reply_tests:
     target_phone: "19911113333"
     original_messages:
       - type: "image"
-        path: "src/imgs/1.jpg"  # 图片路径
+        path: "src/imgs/anime.jpg"  # 图片路径
     reply_text: "这是图片回复"
     expected:
       contains_original: true
@@ -219,7 +219,7 @@ reply_tests:
     target_phone: "19911113333"
     original_messages:
       - type: "video"
-        path: "src/video/1.mp4"  # 视频路径
+        path: "src/video/audio.mp4"  # 视频路径
     reply_text: "这是视频回复"
     expected:
       contains_original: true
@@ -296,7 +296,7 @@ forward_message_tests:
 
   - name: "转发图片消息_单人"
     message_content: # 改为列表
-      - path: "src/imgs/1.jpg"
+      - path: "src/imgs/anime.jpg"
     media_type: "image"  # 新增类型标识
     search_queries: [ "19911116666" ]
     target: "friend"
@@ -306,7 +306,7 @@ forward_message_tests:
 
   - name: "转发视频消息_单人"
     message_content: # 改为列表
-      - path: "src/video/1.mp4"
+      - path: "src/video/audio.mp4"
     media_type: "video"  # 新增类型标识
     search_queries: [ "19911116666" ]
     target: "friend"
@@ -384,6 +384,25 @@ select_message_tests:
     select_type: "list"
     select_count: 1
 
+  - name: "单条收藏选择"
+    message_content: [ "单条消息选择收藏" ]
+    search_queries: [ "19911114444" ]
+    target: "friend"
+    target_chat: "19911113333"
+    operation_type: "favorite"
+    select_type: "list"
+    select_count: 1
+
+
+  - name: "多条收藏选择"
+    message_content: [ "多条消息选择收藏1","多条消息选择收藏2" ]
+    search_queries: [ "19911114444" ]
+    target: "friend"
+    target_chat: "19911113333"
+    operation_type: "favorite"
+    select_type: "list"
+    select_count: 2
+
 delete_message_tests:
   - name: "确认删除消息"
     message_content: [ "纯删除消息" ]
@@ -412,14 +431,14 @@ recall_message_tests:
 
   - name: "撤回视频消息"
     message_content:
-      - path: "src/video/1.mp4"
+      - path: "src/video/audio.mp4"
     target: "friend"
     target_chat: "19911113333"
     media_type: "video"
 
   - name: "撤回图片消息"
     message_content:
-      - path: "src/imgs/1.jpg"
+      - path: "src/imgs/anime.jpg"
     target: "friend"
     target_chat: "19911113333"
     media_type: "image"
@@ -482,7 +501,7 @@ copy_message_tests:
   - name: "复制图片消息"
     target: "friend"
     message_content:
-      - path: "src/imgs/1.jpg"
+      - path: "src/imgs/anime.jpg"
     target_chat: "19911113333"
     operations:
       - "right_click:paste"
@@ -492,7 +511,7 @@ copy_message_tests:
   - name: "复制视频消息"
     target: "friend"
     message_content:
-      - path: "src/video/1.mp4"
+      - path: "src/video/audio.mp4"
     target_chat: "19911113333"
     operations:
       - "right_click:paste"
@@ -518,12 +537,146 @@ copy_message_tests:
     send_method: "click"
     media_type: "emoji"
 
-
+# 合并后的收藏项测试（验证收藏 + 查看+转发操作）
 favorite_message_tests:
-  - name: "收藏消息"
+  - name: "文本消息收藏测试"
+    test_id: "text_001"
     target: "friend"
+    search_queries: [ "19911115555","19911116666" ]
     message_content: [ "单条--收藏文本消息" ]
     target_chat: "19911113333"
+    media_type: "text"
+    actions: ["view","forward"]
+    operation_type: "confirm"
+    expected_toast: "Forwarded"
+
+  - name: "图片消息收藏测试"
+    target: "friend"
+    message_content:
+      - path: "src/imgs/anime.jpg"
+    target_chat: "19911113333"
+    media_type: "image"
+    actions: ["view","forward","delete"]
+    search_queries: [ "19911114444","19911113333" ]
+    operation_type: "confirm"
+    expected_toast: "Forwarded"
+    toast_message: "Delete Success"
+#
+  - name: "视频消息收藏测试"
+    target: "friend"
+    message_content:
+      - path: "src/video/audio.mp4"
+    target_chat: "19911113333"
+    media_type: "video"
+    actions: ["view"]
+
+#
+  - name: "文件消息收藏测试"
+    target: "friend"
+    message_content:
+      - path: "src/files/document.docx"
+    target_chat: "19911113333"
+    media_type: "file"
+    actions: ["view"]
+    toast_message: "Delete Success"
+#
+  - name: "表情消息收藏测试"
+    target: "friend"
+    message_content: [ "yawn", "amaze","demon","sad" ]
+    send_method: "click"
+    target_chat: "19911113333"
+    media_type: "emoji"
+    actions: ["delete"]
+    toast_message: "Delete Success"
+    expected: # 新增预期结果
+      count: 1
+      sequence: [ "yawn", "amaze","demon","sad" ]
+
+favorite_multiple_tests:
+  - name: "多选收藏项转发测试"
+    target: "friend"
+    target_items:
+      - { "type": "video", "identifier": "audio-thumbnail.png" }  # 视频项（通过缩略图识别）
+      - { "type": "file", "identifier": "document.docx" }         # 文件项（通过文件名识别）
+    target_chat: "19911113333"
+    action: 'forward'
+    search_queries: [ "19911114444","19911113333" ]
+    operation_type: "confirm"
+    expected:
+      selected_count: 2
+      toast_message: "Forwarded"
+
+  - name: "多选收藏项取消测试"
+    target: "friend"
+    target_items:
+      - { "type": "video", "identifier": "audio-thumbnail.png" }  # 视频项（通过缩略图识别）
+      - { "type": "file", "identifier": "document.docx" }         # 文件项（通过文件名识别）
+    target_chat: "19911113333"
+    action: 'cancel'
+    search_queries: [ "19911114444","19911113333" ]
+#    operation_type: "confirm"
+    expected:
+      selected_count: 2
+      toast_message: ""
+
+  - name: "多选收藏项删除测试"
+    target: "friend"
+    target_items:
+      - { "type": "video", "identifier": "audio-thumbnail.png" }  # 视频项（通过缩略图识别）
+      - { "type": "file", "identifier": "document.docx" }         # 文件项（通过文件名识别）
+    target_chat: "19911113333"
+    action: 'delete'
+    search_queries: [ "19911114444","19911113333" ]
+#    operation_type: "confirm"
+    expected:
+      selected_count: 2
+      toast_message: "Delete Success"
+
+
+favorite_actions_tests:
+  - name: "图片操作查看"
+    message_content:
+      - path: "src/imgs/anime.jpg"
+    media_type: "image"
+
+  - name: "视频操作查看"
+    message_content:
+      - path: "src/video/audio.mp4"
+    media_type: "video"
+
+
+  - name: "文件操作查看"
+    message_content:
+      - path: "src/files/document.docx"
+    media_type: "file"
+
+
+  - name: "文本操作查看"
+    message_content: [ "单条--收藏文本消息" ]
+    media_type: "text"
+
+favorite_context_menu_tests:
+#  - name: "右键删除"
+#    action_type: "Delete"
+#     expected_toast: "Delete Success"
+
+  - name: "右键转发"
+    action_type: "Forward"
+    search_queries: [ "19911114444","19911113333" ]
+    operation_type: "confirm"
+    expected_toast: "Forwarded"
+
+
+
+
+
+
+#  - name: "表情操作"
+#    message_content: [ "yawn", "amaze","demon","sad" ]
+#    media_type: "emoji"
+
+
+
 
 
 

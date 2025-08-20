@@ -1,7 +1,7 @@
 from selenium.webdriver.support.wait import WebDriverWait
 
 from base.electron_pc_base import ElectronPCBase
-from pages.windows.loc.settings_locators import SETTINGS_LOGO, LOG_OUT_DIALOG, LOG_OUT_BUTTON, DIALOG_CONFIRM_BUTTON, \
+from pages.windows.loc.settings_locators import SETTINGS_LOGO, DIALOG_CONTAINER, LOG_OUT_BUTTON, DIALOG_CONFIRM_BUTTON, \
     DIALOG_CANCEL_BUTTON
 
 
@@ -14,7 +14,7 @@ class LogOutPage(ElectronPCBase):
     def open_logout_dialog(self):
         self.base_click(SETTINGS_LOGO)
         self.base_click(LOG_OUT_BUTTON)
-        self.base_find_element(LOG_OUT_DIALOG)
+        self.base_find_element(DIALOG_CONTAINER)
     def click_cancel(self):
         self.base_click(DIALOG_CANCEL_BUTTON)
 

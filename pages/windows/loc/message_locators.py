@@ -92,6 +92,7 @@ CONFIRM_SHARE = (By.XPATH,"//article[@class='footer']//button[.//span[text()='Co
 CONFIRM_DISABLED = (By.XPATH, "//button[contains(@class, 'is-disabled')]//span[text()='Confirm']") # 确认按钮禁用状态
 CANCEL_SHARE = (By.XPATH,".//span[text()='Cancel']")
 HOME_ICON = (By.CSS_SELECTOR,"article.tool-icons > section:nth-child(1)")
+FAVORITE_ICON = (By.CSS_SELECTOR,"article.tool-icons > section:nth-child(4)")
 
 #————————消息操作
 #消息引用
@@ -130,7 +131,7 @@ CHECK_ELEMENT = (By.CSS_SELECTOR,"article.chat-item.isMe > div.check")
 SELECT_FAVORITE = (By.CSS_SELECTOR,'article.redirection-item:nth-child(1)')
 SELECT_FORWARD = (By.CSS_SELECTOR,'article.redirection-item:nth-child(2)')
 SELECT_DELETE = (By.CSS_SELECTOR,'article.redirection-item:nth-child(3)')
-SELECT_CLOSE = (By.CSS_SELECTOR,'footer .cursor-pointer')
+SELECT_CLOSE = (By.CSS_SELECTOR,'footer .icon-close')
 MESSAGE_ITEM = (By.CSS_SELECTOR,"")
 CHAT_TIME = (By.CSS_SELECTOR,"div.chat-item-box span.opacity-50")
 CONFIRM_SELECT_DELETE = (By.CSS_SELECTOR,".el-dialog__body .el-button--primary")
@@ -153,7 +154,33 @@ RIGHT_NEW_FRIEND_CONTAINER = (By.XPATH, ".//main[@class='new-friend']")
 FRIEND_REQUEST_LIST  = (By.CSS_SELECTOR, ".newFriend .el-scrollbar__view > div")
 CONFIRM_REQUEST = (By.XPATH, "//div[contains(@class, 'el-dialog__body')]//button[span[text()='Confirm']]")
 
+#————————收藏消息
+MSG_ACTIONS_FAVORITE = (By.XPATH, ".//span[text()='Favorite']")#右键收藏
+FAVORITE_LEFT_LIST = (By.CSS_SELECTOR, ".collection-side")#收藏左边分类的容器
 
+FAVORITE_RIGHT_LIST = (By.CSS_SELECTOR, ".collection-main")#收藏消息列表容器
+#或者section.content.flex.flex-col
+FAVORITE_ITEM = (By.CSS_SELECTOR, "div.collection-row.flex.items-center.relative")#每条消息的卡片
+FAVORITE_ITEM_CONTENT = (By.CSS_SELECTOR, ".flex .text-sm")#收藏的消息内容 也就是图视频文本的容器 容器下面有<img>等
+FAVORITE_ITEM_NAME = (By.CSS_SELECTOR, ".collection-row .name")#在哪个聊天用户下收藏的用你名称
+FAVORITE_ITEM_TIME = (By.CSS_SELECTOR, ".collection-row .date")#收藏的时间包含时分秒 只要对比时分就可以
+
+
+#消息收藏操作
+ALL_FAVORITES = (By.XPATH,"//div[@class='side-item active-item']")
+VIEW_CONTENT_NAME = (By.CSS_SELECTOR,"span.flex-1.truncate")
+VIEW_CONTENT_IMAGE  = (By.CSS_SELECTOR,".image-container")
+VIEW_CONTENT_VIDEO = (By.CSS_SELECTOR,'.video-preview')
+VIEW_CONTENT_TEXT = (By.CSS_SELECTOR, ".//article[@class='mt-1']")
+VIEW_CONTENT_FILE = (By.CSS_SELECTOR, ".col-left")
+TEXT_CONTENT = (By.CSS_SELECTOR, ".break-all.cursor-pointer")
+
+INDEX_ROW = (By.CSS_SELECTOR,'.collection-row')
+MENU_FAVORITE = (By.CSS_SELECTOR,'.mx-context-menu')
+IS_SUCCESS = (By.CSS_SELECTOR,'.mx-context-menu')
+TIP_SUCCESS = (By.CSS_SELECTOR,".el-message--success")
+CHECKBOX = (By.CSS_SELECTOR,".check ")
+CONTENT_TIME = (By.CSS_SELECTOR,".chat-item-user-info span")
 
 #————————————单钩双钩
 double_check_icon = "div[index='{index}'] div > svg path:nth-of-type(2)"

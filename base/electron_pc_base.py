@@ -18,7 +18,7 @@ from  selenium.webdriver.support import  expected_conditions as EC
 from pages.windows.loc.friend_locators import CARD_ITEM
 from pages.windows.loc.login_locators import captcha_locator, LOGIN_SCE_DIALOG, LOGIN_AGREE
 from pages.windows.loc.message_locators import TEXTAREA_INPUT, CONTACTS_ICON, CONTACTS_CONTAINER, FRIEND_CARD, \
-    FRIEND_NAME, SEARCH_INPUT, SEARCH_SECTION, HOME_ICON, SESSION_LIST
+    FRIEND_NAME, SEARCH_INPUT, SEARCH_SECTION, HOME_ICON, SESSION_LIST, FAVORITE_ICON, FAVORITE_LEFT_LIST, FAVORITE_ITEM
 from utils.config_utils import ConfigUtils
 from utils.logger import set_logger
 
@@ -349,7 +349,7 @@ class ElectronPCBase:
                 raise
             else:
                 return False  # 其他异常也返回 False
-    def open_menu_panel(self,menu_type="contacts"):
+    def  open_menu_panel(self,menu_type="contacts"):
         """
             通用方法：打开不同的菜单面板
             :param menu_type:
@@ -362,11 +362,18 @@ class ElectronPCBase:
                 "left_container": CONTACTS_CONTAINER,
                 "card_items": FRIEND_CARD
             },
-            "home": {
+            "home": {   
                 "icon": HOME_ICON,
                 "left_container": SESSION_LIST,
                 "card_items": None  # 如果没有需要检查的子项可以设为None
-            }
+            },
+            "favorite": {
+                "icon": FAVORITE_ICON,
+                "left_container": FAVORITE_LEFT_LIST,
+                "card_items": FAVORITE_ITEM  # 如果没有需要检查的子项可以设为None
+            },
+
+
         }
         config = menu_config.get(menu_type,menu_config["contacts"]) # 获取配置 默认contacts
         self.base_click(config["icon"])
