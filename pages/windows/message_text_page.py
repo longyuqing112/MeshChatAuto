@@ -352,12 +352,6 @@ class MessageTextPage(ElectronPCBase):
 
 
     def send_multiple_message(self,messages,send_method='click',timeout=10):
-        # 发消息给自己
-        # current_phone = self.get_current_phone_number()
-        # self.open_avatar_menu()
-        # if not self.verify_message_window_phone(current_phone):
-        #     print("消息发送失败，手机号验证不一致")
-        #     return False
         print(f"Debug - 收到的消息内容: {messages}")  # 调试用
         print(f"Debug - 消息类型: {type(messages)}")  # 调试用
         for msg in messages:
