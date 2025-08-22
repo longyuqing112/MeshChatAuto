@@ -195,3 +195,11 @@ REJECT_BUTTON = (By.CSS_SELECTOR,"button.el-button--small:nth-of-type(1)")
 ACCEPT_BUTTON = (By.CSS_SELECTOR,"button.el-button--primary.el-button--small")
 ACTION_RESULT_TEXT = (By.CSS_SELECTOR,".right > :last-child")
 
+#————————————拉黑好友
+
+ICON_MORE =  (By.CSS_SELECTOR,"i.icon-more1")
+MORE_PAN = (By.CSS_SELECTOR,"aside.chat-drawer")
+BLOCK_BUTTON = (By.XPATH,"//section[contains(text(), 'Block')]")
+UNBLOCK_BUTTON = (By.XPATH,"//section[contains(text(), 'Unblock')]")
+
+

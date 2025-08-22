@@ -64,12 +64,7 @@ def load_test_data(file_path):
 #     assert not is_friend_exist, f"确认删除后，好友 {target_friend} 应该已从联系人列表中移除"
 #     print(f"验证成功：确认删除后，好友 {target_friend} 已从联系人列表中移除")
 #
-# #————————删除好友请求数据
-# def test_delete_friend_request(driver):
-#     friend_operation_page = FriendOperationPage(driver)
-#     friend_operation_page.delete_friend_request(confirm=False)
-#     time.sleep(2)
-#     friend_operation_page.delete_friend_request(confirm=True)
+
 #
 # #————————接受好友数据
 # @pytest.mark.parametrize(
@@ -205,6 +200,14 @@ def test_complete_friend_workflow(driver,auto_login):
         time.sleep(3)
         # 清理附加实例
         instance_manager.cleanup()
+
+
+# #————————删除好友请求数据
+def test_delete_friend_request(driver):
+    friend_operation_page = FriendOperationPage(driver)
+    friend_operation_page.delete_friend_request(confirm=False)
+    time.sleep(2)
+    friend_operation_page.delete_friend_request(confirm=True)
 
 
 

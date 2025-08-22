@@ -757,3 +757,15 @@ multi_account_login:
     expected: "success"
     role: "receiver_c"
 #
+block_friend_tests:
+  - name: "拉黑发送好友"
+    method: "global"
+    env: "Local"
+    terms: true
+    identifier_type: "phone"
+    username: "19911114444"
+    password: "111111a"
+    expected: "success"
+    role: "receiver_b"
+    actions: ["cancel","block",'unblock']
+    sender: "{{ USERNAME }}"
