@@ -2,7 +2,7 @@ from pages.windows.card_message_page import CardMessagePage
 import os
 import pytest
 
-from pages.windows.loc.message_locators import CONFIRM_SHARE, RIGHT_ITEM, CANCEL_SHARE
+from pages.windows.loc.message_locators import CONFIRM_SHARE, RIGHT_ITEM, CANCEL_SHARE, SHARE_FRIENDS_DIALOG
 from utils.config_yaml_utils import YamlConfigUtils
 
 current_dir = os.path.dirname(__file__)

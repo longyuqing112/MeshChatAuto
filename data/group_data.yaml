@@ -1,0 +1,7 @@
+create_group:
+  - name: "创建群组名称-id"
+    group_name: "新建群-"
+    search_queries: [ "19911114444","19911113333" ]
+    username: "19911114444"
+    password: "111111a"
+    creator_number: "{{ USERNAME }}"
