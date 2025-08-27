@@ -8,6 +8,7 @@ from selenium.common.exceptions import TimeoutException
 from  selenium.webdriver.support import  expected_conditions as EC
 
 from pages.windows.loc.friend_locators import MORE_SETTING, MORE_SETTING_CONTAINER
+from pages.windows.loc.group_locators import GROUP_FRIENDS_DIALOG, MEMBER_ACCOUNT
 from pages.windows.loc.message_locators import SHARE_FRIENDS, SHARE_FRIENDS_DIALOG, SHARE_FRIENDS_SEARCH, \
     SHARE_FRIENDS_LEFT_CONTAINER, SHARE_FRIENDS_LEFT_ITEM, SHARE_FRIENDS_ITEM_NAME, CHECK_BUTTON, RIGHT_ITEM_CLOSE, \
     RIGHT_ITEM, RIGHT_LAST_ITEM, TARGET_FRIEND, CONFIRM_SHARE, SESSION_LIST, SESSION_ITEMS, SESSION_ITEM_UPDATES, \
@@ -29,8 +30,17 @@ class CardMessagePage(ElectronPCBase):
         self.base_find_element(MORE_SETTING_CONTAINER)
         self.base_click(SHARE_FRIENDS)
 
-    def select_friends(self, search_queries, select_type="list"):
-        self.base_find_element(SHARE_FRIENDS_DIALOG)
+    def select_friends(self, search_queries, select_type="list",dialog_element=None):
+        if dialog_element is None:
+            dialog_loc = SHARE_FRIENDS_DIALOG
+            username_loc = SHARE_FRIENDS_ITEM_NAME
+            need_card_content = True  # 分享场景需要卡片内容
+        else:
+            dialog_loc = dialog_element
+            username_loc = MEMBER_ACCOUNT
+            need_card_content = False    # 群组场景不需要卡片内容
+
+        self.base_find_element(dialog_loc)
         # 初始化验证容器
         expected_selected = []  # 记录实际勾选的好友标识（如用户名或手机号）
         for query in search_queries:
@@ -43,7 +53,7 @@ class CardMessagePage(ElectronPCBase):
                 self.base_find_element(SHARE_FRIENDS_LEFT_CONTAINER)
                 target_card = self.find_and_click_target_card(
                     card_container_loc=SHARE_FRIENDS_LEFT_ITEM,
-                    username_loc=SHARE_FRIENDS_ITEM_NAME,
+                    username_loc= username_loc,
                     userid_loc=None,
                     target_phone=query,
                     context_element=None  # 传入窗口上下文
@@ -52,7 +62,7 @@ class CardMessagePage(ElectronPCBase):
                 print("完整卡片HTML:", target_card.get_attribute('outerHTML'))
                 print(f'找到目标卡片：{target_card.text}')
                 # 获取好友的实际显示名称
-                actual_name = target_card.find_element(*SHARE_FRIENDS_ITEM_NAME).text.strip()
+                actual_name = target_card.find_element(*username_loc).text.strip()
                 expected_selected.append(actual_name)  # 保存实际名称
 
                 check_btn = target_card.find_element(*CHECK_BUTTON)
@@ -81,8 +91,12 @@ class CardMessagePage(ElectronPCBase):
 
         selected_count =  len(self.base_find_elements(RIGHT_ITEM_CLOSE))
         print(selected_count)
-        original_content=self.get_contact_card_content()
-        print('用户：',original_content)
+        if need_card_content:
+            original_content=self.get_contact_card_content()
+            print('卡片内容用户：',original_content)
+        else:
+            original_content = "群组场景无卡片内容"  # 或者直接返回空字符串
+            print('群组创建场景，跳过卡片内容获取')
         return {
             'selected_count': len(self.base_find_elements(RIGHT_ITEM_CLOSE)),
             'card_content': original_content,

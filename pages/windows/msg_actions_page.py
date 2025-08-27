@@ -23,7 +23,7 @@ from pages.windows.loc.message_locators import MSG_ACTIONS_FORWARD, \
     MSG_ACTIONS_COPY, MSG_ACTIONS_QUOTE, MSG_ACTIONS_MULTIPLE, MSG_ACTIONS_FAVORITE, FAVORITE_RIGHT_LIST, FAVORITE_ITEM, \
     FAVORITE_ITEM_TIME, FAVORITE_ITEM_CONTENT, FAVORITE_ITEM_NAME, ALL_FAVORITES, VIEW_CONTENT_NAME, VIEW_CONTENT_IMAGE, \
     VIEW_CONTENT_VIDEO, VIEW_CONTENT_FILE, TEXT_CONTENT, INDEX_ROW, MENU_FAVORITE, TIP_SUCCESS, CHECKBOX, \
-    SELECT_FAVORITE, CONTENT_TIME
+    SELECT_FAVORITE, CONTENT_TIME, SHARE_FRIENDS_DIALOG
 from pages.windows.loc.settings_locators import DIALOG_CONTAINER
 from pages.windows.message_text_page import MessageTextPage
 
@@ -337,6 +337,7 @@ class MsgActionsPage(ElectronPCBase):
 
 
         else:
+            dialog_element = SHARE_FRIENDS_DIALOG
             result = self.card_page.select_friends(search_queries=search_queries, select_type=select_type)
             if operation_type == "confirm":
                 share_time = self.card_page.confirm_share()
