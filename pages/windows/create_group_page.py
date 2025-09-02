@@ -1,7 +1,9 @@
 import os
 import time
 
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+from  selenium.webdriver.support import  expected_conditions as EC
 
 from base.electron_pc_base import ElectronPCBase
 from pages.windows.card_message_page import CardMessagePage
@@ -9,8 +11,10 @@ from pages.windows.loc.friend_locators import CREATE_MENU_BUTTON, CREATE_MENU_CO
 from selenium.webdriver.support.wait import WebDriverWait
 
 from pages.windows.loc.group_locators import CROUP_CHAT, CROUP_NAME_DIALOG, CROUP_NAME_INPUT, GROUP_DIALOG_CONFIRM, \
-    GROUP_FRIENDS_DIALOG, MEMBER_NUMBER, SUCCESS_GROUP_TIP
-from pages.windows.loc.message_locators import CONFIRM_SHARE, RIGHT_ITEM_CLOSE
+    GROUP_FRIENDS_DIALOG, MEMBER_NUMBER, SUCCESS_GROUP_TIP, BREAK_GROUP, DIALOG_CONFIRM, GROUP_FOOTER_MESSAGE, \
+    CLEAR_CONTAINER, CONTEXT_MENU_DELETE
+from pages.windows.loc.message_locators import CONFIRM_SHARE, RIGHT_ITEM_CLOSE, ICON_MORE, MORE_PAN, CONFIRM_REQUEST, \
+    SESSION_ITEMS, SESSION_PHONE
 from pages.windows.message_text_page import MessageTextPage
 from pages.windows.msg_actions_page import MsgActionsPage
 
@@ -251,6 +255,68 @@ class GroupPage(ElectronPCBase):
 
         print("未找到名片消息")
         return False
+
+    def open_chat_settings(self):
+        """打开聊天设置"""
+        self.base_click(ICON_MORE)
+        self.wait.until(EC.visibility_of_element_located(MORE_PAN))
+    def right_click_session(self,group_item,right_action=None):
+        action_chains = ActionChains(self.driver)
+        action_chains.context_click(group_item).perform()
+        self.base_find_element(CLEAR_CONTAINER)
+        if right_action == 'delete':
+            self.base_click(CONTEXT_MENU_DELETE)
+            self.base_click(CONFIRM_REQUEST)
+
+
+
+    def dissolve_group(self,group_name):
+        self.msg_page.open_chat_session('session_list', group_name)
+        self.open_chat_settings()
+        self.base_click(BREAK_GROUP)
+        self.base_click(DIALOG_CONFIRM)
+        # 5. 验证解散成功 - 检查footer消息
+        time.sleep(2)
+
+        footer_message = self.base_get_text(GROUP_FOOTER_MESSAGE)
+        print(f'得到消息: {footer_message}')
+        expected_message = "Unable to send message in an exited group chat"
+        assert footer_message == expected_message, f"预期消息: {expected_message}, 实际消息: {footer_message}"
+        print("群组解散成功")
+        self.delete_group_session_list(group_name)
+        print("最后群组验证功能")
+        self.verity_delete_session(group_name)
+
+    def delete_group_session_list(self,group_name):
+        """从会话列表中删除群组"""
+        group_item = self.msg_page.scroll_to_friend_in_session(group_name)
+        # SESSION_ITEMS,SESSION_LIST,
+        group_item = self.msg_page.find_and_click_target_card(
+            card_container_loc=SESSION_ITEMS,
+            username_loc=SESSION_PHONE,
+            userid_loc=None,
+            target_phone=group_name,
+            context_element=None  # 传入窗口上下文
+        )
+        self.right_click_session(group_item,right_action='delete')
+    def verity_delete_session(self,group_name):
+        is_group_exist = self.msg_page.scroll_to_friend_in_session(group_name,raise_exception=False)
+        if not is_group_exist:
+            print(f"群组 {group_name} 已成功清除会话。")
+            return True
+        else:
+            print(f"群组 {group_name} 仍然在首页会话列表中，清除失败。")
+            return False
+
+
+
+
+
+
+
+
+
+
 
 
 

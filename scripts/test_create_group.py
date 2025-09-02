@@ -82,3 +82,6 @@ def test_create_group(driver,auto_login,test_case):
     #验证所有消息
     success = group_page.verify_all_messages_receiver(group_name,select_count,processed_msg,target_phone)
     assert success, "消息验证失败"
+
+    group_page.dissolve_group(group_name)
+
