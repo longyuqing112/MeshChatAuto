@@ -455,14 +455,15 @@ class MessageTextPage(ElectronPCBase):
             print(f"检查当前聊天窗口时发生异常：{str(e)}")
             return False
     #会话列表中查找该好友/contact菜单好友列表——会话列表滚动查找好友
-    def scroll_to_friend_in_session(self,phone,max_scroll=5):
+    def scroll_to_friend_in_session(self,phone,max_scroll=5 ,raise_exception=True):
         # 获取会话列表容器
         return self.scroll_to_element(
             SESSION_LIST,
             SESSION_ITEMS,
             phone,
             max_scroll,
-            SESSION_PHONE)
+            SESSION_PHONE,
+            raise_exception=raise_exception)
 
 
 

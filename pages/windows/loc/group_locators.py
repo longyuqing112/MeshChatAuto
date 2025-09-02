@@ -10,3 +10,8 @@ GROUP_FRIENDS_DIALOG = (By.XPATH,"//div[@role='dialog' and contains(., 'Create G
 MEMBER_ACCOUNT = (By.CSS_SELECTOR,"article.card .name")
 MEMBER_NUMBER = (By.XPATH,"//*[@id='chat-header']/section/div/p[2]")
 SUCCESS_GROUP_TIP = (By.CSS_SELECTOR,".group-invite")
+BREAK_GROUP = (By.XPATH,"//section[@class='del cursor-pointer box-item' and text()='Break up the group chat']")
+CONTEXT_MENU_DELETE = (By.XPATH, "//div[contains(@class, 'mx-context-menu-item')]//span[text()='Delete']")
+GROUP_FOOTER_MESSAGE = (By.CSS_SELECTOR, "footer.footer p")
+CLEAR_CONTAINER =(By.CSS_SELECTOR,".mx-context-menu[data-type='ContextSubMenu']")
+DIALOG_CONFIRM = (By.XPATH,"//div[@role='dialog']//button[span[text()='Confirm']]")
