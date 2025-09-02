@@ -417,6 +417,7 @@ class MsgActionsPage(ElectronPCBase):
 
     def get_last_n_messages(self,n):
         try:
+            # 确保在聊天窗口中查找 而不是会话列表
             messages = []
             latest_index = self.msg_page.latest_msg_index_in_chat()
 
@@ -434,6 +435,23 @@ class MsgActionsPage(ElectronPCBase):
             return messages
         except NoSuchElementException:
             return []  # 返回空列表避免后续操作报错
+    def get_group_n_message(self,n):
+        try:
+            # 确保在聊天窗口中查找
+            message = []
+
+            # 查找聊天窗口中的所有消息
+            chat_messages = self.driver.find_elements(By.CSS_SELECTOR, "div[index] > article.chat")
+
+            # 获取最新的n条消息
+            for i in range(max(0, len(chat_messages) - n), len(chat_messages)):
+                message.append(chat_messages[i])
+
+            return message
+
+        except Exception as e:
+            print(f"获取消息时出错: {e}")
+            return []
     def _verify_delete_result(self,expected_content):
         # 获取删除后的消息列表
         expected_count = len(expected_content)
@@ -825,26 +843,11 @@ class MsgActionsPage(ElectronPCBase):
     def forward_favorite_item(self, media_type, keyword, favorite_time, search_queries):
         """转发收藏项"""
 
-        # if media_type in ['text', 'emoji']:
-        #     file_base_name = keyword
-        # else:
-        #     file_base_name = os.path.splitext(keyword)[0]  # 获取anime或1
-        # item = self._find_favorite_item(media_type, file_base_name, favorite_time)
-        # if not item:
-        #     raise Exception(f"未找到匹配的收藏项: {file_base_name}")
-        #
-        # # 确保元素可见
-        # self.driver.execute_script("arguments[0].scrollIntoView();", item)
-        # time.sleep(1)
+
         item = self._prepare_item(media_type, keyword, favorite_time)
         self._execute_item_action(item,action_type = 'Forward')
 
-        # # 右键点击收藏项
-        # ActionChains(self.driver).context_click(item).perform()
-        # time.sleep(1)
-        # # 选择转发菜单
-        # self._select_context_menu('Forward')
-        # 选择好友并确认转发
+
         result = self.card_page.select_friends(search_queries, select_type="list")
         share_time = self.card_page.confirm_share()
         # # 验证转发结果

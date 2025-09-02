@@ -5,3 +5,22 @@ create_group:
     username: "19911114444"
     password: "111111a"
     creator_number: "{{ USERNAME }}"
+    target_phone: "19911116666"
+    select_count: 3
+    messages:
+      text_messages: [ "这是一条测试消息", "群组消息测试" ]
+
+
+
+
+
+#group_msg_test:
+#  - name: "群组消息测试"
+#    group_name: "测试群-"
+#    search_queries: [ "19911114444", "19911113333" ]
+#    creator_number: "{{ USERNAME }}"
+#    messages:
+#      text_messages: [ "这是一条测试消息", "群组消息测试" ]
+#      image_paths: [ "src/imgs/anime.jpg", "src/imgs/sample.png" ]
+#      file_paths: [ "src/files/document.docx"]
+#      video_paths: [ "src/video/audio.mp4" ]
