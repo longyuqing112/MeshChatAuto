@@ -195,6 +195,7 @@ class MessageTextPage(ElectronPCBase):
         else:
             print(f"最新文本消息内容为 '{latest_text}'，与预期消息 '{message}' 不匹配")
             return False
+
     def verify_media_message(self,media_type,file_paths=None, timeout=20):
         try:
             result  = self.wait_for_latest_message_in_chat(
@@ -714,7 +715,63 @@ class MessageTextPage(ElectronPCBase):
     #         print(f"❌ 验证异常: {str(e)}")
     #         return False, 0
 
+    def send_group_messages(self, messages_config, send_method='click', timeout=10):
+        """专门用于群组测试的消息发送方法，不修改原有逻辑"""
+        results = {}
+        # 发送文本消息
+        if 'text_messages' in messages_config and messages_config['text_messages']:
+            texts = messages_config['text_messages']
+            print(f"准备发送文本消息: {texts}")
+            for text in texts:
+                try:
+                    self.enter_message(text)
 
+                    if send_method == 'click':
+                        self.send_message()
+                    elif send_method == 'enter':
+                        self.send_message_via_enter()
+
+                    # 等待消息发送完成
+                    latest_index = self.latest_msg_index_in_chat()
+                    if latest_index is not None:
+                        WebDriverWait(self.driver, timeout).until(
+                            EC.invisibility_of_element_located(
+                                (By.XPATH, f".//div[@index='{latest_index}']//i[contains(@class, 'animate-spin')]")
+                            )
+                        )
+
+                    # 验证消息是否在聊天窗口中
+                    if not self.is_text_message_in_chat(text):
+                        print(f"警告: 文本消息 '{text}' 未在聊天窗口中找到")
+                        results[f'text_{text}'] = False
+                    else:
+                        print(f"文本消息 '{text}' 发送成功")
+                        results[f'text_{text}'] = True
+
+                except Exception as e:
+                    print(f"文本消息 '{text}' 发送失败: {e}")
+                    results[f'text_{text}'] = False
+
+        # 发送其他类型消息（使用原有方法）
+        if 'image_paths' in messages_config and messages_config['image_paths']:
+            image_paths = messages_config['image_paths']
+            print(f"准备发送图片消息: {image_paths}")
+            results['image'] = self.send_media_messages(image_paths, 'image')
+            print(f"图片消息发送结果: {results['image']}")
+
+        if 'file_paths' in messages_config and messages_config['file_paths']:
+            file_paths = messages_config['file_paths']
+            print(f"准备发送文件消息: {file_paths}")
+            results['file'] = self.send_media_messages(file_paths, 'file')
+            print(f"文件消息发送结果: {results['file']}")
+
+        if 'video_paths' in messages_config and messages_config['video_paths']:
+            video_paths = messages_config['video_paths']
+            print(f"准备发送视频消息: {video_paths}")
+            results['video'] = self.send_media_messages(video_paths, 'video')
+            print(f"视频消息发送结果: {results['video']}")
+
+        return results
 
 
 
