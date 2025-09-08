@@ -9,3 +9,6 @@ numpy
 opencv-python
 redis
 pymongo
+allure-pytest
+allure-python-commons
+pyinstaller

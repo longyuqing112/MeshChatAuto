@@ -11,7 +11,7 @@ AD_LOGIN =  (By.XPATH,"//span[text()='AD Login']")
 TERM = (By.XPATH,'//*[@id="app"]/div/div[1]/section/div/article/div[1]/label/span')
 # TERM = (By.XPATH,'//*[@id="app"]/div/div[1]/section/div/article/div[1]/label/span')
 # REMEMBER= (By.CSS_SELECTOR,".el-checkbox__label")
-REMEMBER= (By.XPATH,'//*[@id="app"]/div/div[1]/section/div/article/form/div[4]/div/section/label/span[1]')
+REMEMBER= (By.CSS_SELECTOR,"label.el-checkbox.el-checkbox--default > span.el-checkbox__input > input.el-checkbox__original[type='checkbox']")
 
 LOGIN_BUTTON = (By.XPATH, "//button[span[text()='Login']]")
 # ERROR_MESSAGE = (By.CSS_SELECTOR, ".error-message")

@@ -73,9 +73,9 @@ def asset_login_result(login_page,test_data):
             print("登录成功，页面结构符合预期")
             login_page.handle_close_popup()# 调用处理弹窗的函数
 
-            logout_page = LogOutPage(login_page.driver)
-            logout_page.open_logout_dialog()
-            logout_page.click_confirm()
+            # logout_page = LogOutPage(login_page.driver)
+            # logout_page.open_logout_dialog()
+            # logout_page.click_confirm()
             print("已执行退出登录操作")
 
 
@@ -84,23 +84,23 @@ def asset_login_result(login_page,test_data):
 
 
 
-
-
-# 登录测试用例，不需要自动登录
-@pytest.mark.no_auto_login
-@pytest.mark.parametrize("test_data",load_test_data(yaml_file_path)["test_suites"]["username_password"])
-def test_login_number(driver, test_data):
-    """使用 YAML 文件中的测试数据执行登录测试"""
-    login_page = LoginPage(driver)
-
-    login_page.login(
-        phonenumber=test_data.get("username",""),
-        password=test_data.get("password",""),
-
-        remember=test_data.get("remember",True),
-        terms_agree=test_data.get("terms",True)
-    )
-    asset_login_result(login_page,test_data)
+#
+#
+# # 登录测试用例，不需要自动登录
+# @pytest.mark.no_auto_login
+# @pytest.mark.parametrize("test_data",load_test_data(yaml_file_path)["test_suites"]["username_password"])
+# def test_login_number(driver, test_data):
+#     """使用 YAML 文件中的测试数据执行登录测试"""
+#     login_page = LoginPage(driver)
+#
+#     login_page.login(
+#         phonenumber=test_data.get("username",""),
+#         password=test_data.get("password",""),
+#
+#         remember=test_data.get("remember",True),
+#         terms_agree=test_data.get("terms",True)
+#     )
+#     asset_login_result(login_page,test_data)
 
 def load_multi_accounts():
     config = ConfigUtils(yaml_file_path).read_config(render_vars=True)

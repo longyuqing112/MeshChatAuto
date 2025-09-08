@@ -6,9 +6,50 @@ create_group:
     password: "111111a"
     creator_number: "{{ USERNAME }}"
     target_phone: "19911116666"
-    select_count: 3
+    select_count: 7
     messages:
       text_messages: [ "这是一条测试消息", "群组消息测试" ]
+      image_paths: [ "src/imgs/anime.jpg", "src/imgs/sample.png" ]
+      file_paths: [ "src/files/document.docx"]
+      video_paths: [ "src/video/audio.mp4" ]
+
+group_msg_reply:
+   - name: "群消息引用操作-文本"
+     actions: "reply"
+     original_messages: [ "群聊引用消息" ]  # 先发送的原消息
+     reply_text: "This is my group reply"  # 回复内容
+     expected:
+       contains_original: true  # 回复中应包含原消息
+
+   - name: "图片消息回复测试"
+     target: "friend"
+     target_phone: "19911113333"
+     original_messages:
+       - type: "image"
+         path: "src/imgs/anime.jpg"  # 图片路径
+     reply_text: "这是图片回复"
+     expected:
+       contains_original: true
+
+   - name: "视频消息回复测试"
+     target: "friend"
+     target_phone: "19911113333"
+     original_messages:
+       - type: "video"
+         path: "src/video/audio.mp4"  # 视频路径
+     reply_text: "这是视频回复"
+     expected:
+       contains_original: true
+
+   - name: "文件消息回复测试"
+     target: "friend"
+     target_phone: "19911113333"
+     original_messages:
+       - type: "file"
+         path: "src/files/document.docx"  # 文件路径
+     reply_text: "这是文件回复"
+     expected:
+       contains_original: true
 
 
 

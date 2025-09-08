@@ -65,6 +65,7 @@ class MsgActionsPage(ElectronPCBase):
         }.get(action)
         time.sleep(1)
         self.base_click(menu_item)
+
     def _verify_reply_content(self,reply_text,original_text,expected_contains_original,original_type='text'):
         """
                验证回复内容是否包含：
@@ -337,7 +338,7 @@ class MsgActionsPage(ElectronPCBase):
 
 
         else:
-            dialog_element = SHARE_FRIENDS_DIALOG
+            print('执行confirm 多选择转发消息操作 ')
             result = self.card_page.select_friends(search_queries=search_queries, select_type=select_type)
             if operation_type == "confirm":
                 share_time = self.card_page.confirm_share()
@@ -381,12 +382,14 @@ class MsgActionsPage(ElectronPCBase):
 
     def _verify_select_forward_result(self,expected_names,expected_content,expected_time):
         for name in expected_names:
+            print('验证单聊中',name,'预期数量：',len(expected_content))
             self.msg_page.open_chat_session(target='session_list', phone=name) #打开每个勾选的单聊页面
+            time.sleep(3)
             # 2. 根据最新两条定位消息项+时间一致+单钩状态
             # 2. 直接定位最新两条消息（避免获取全部） # 根据预期内容数量获取消息
             expected_count = len(expected_content)
             messages = self.get_last_n_messages(expected_count)
-            # print('获取实际最新2条消息元素/预期值',messages,expected_content)
+            print('验证单聊中得到数据',messages,expected_content)
             # 3. 验证消息数量
             assert len(messages) == expected_count, (
                 f"消息数量不符，预期{expected_count}条，实际{len(messages)}条"
@@ -394,6 +397,7 @@ class MsgActionsPage(ElectronPCBase):
             actual_contents = []
             for msg in messages:
                 try:
+                    print(msg.get_attribute('outerHTML'))
                     content = msg.find_element(By.CSS_SELECTOR, ".whitespace-pre-wrap").text.strip()
                     print('获取到其中一条消息：',content)
                     actual_contents.append(content)
@@ -411,7 +415,7 @@ class MsgActionsPage(ElectronPCBase):
     def _get_message_by_index(self,index):
         return  WebDriverWait(self.driver, 10).until(
         EC.presence_of_element_located(
-            (By.CSS_SELECTOR, f"div[index='{index}']")
+            (By.CSS_SELECTOR, f"article.chat[index='{index}']")
         )
     )
 
@@ -420,6 +424,7 @@ class MsgActionsPage(ElectronPCBase):
             # 确保在聊天窗口中查找 而不是会话列表
             messages = []
             latest_index = self.msg_page.latest_msg_index_in_chat()
+            print(f"单聊中最新index：{latest_index}")
 
             # 计算起始索引（最新消息往前推n-1条）
             start_index = max(0, latest_index - n + 1)
@@ -497,7 +502,7 @@ class MsgActionsPage(ElectronPCBase):
         # 尝试获取原消息元素
         original_element = self.driver.find_element(
             By.CSS_SELECTOR,
-            f"div[index='{original_index}']"
+            f"article.chat[index='{original_index}']"
         )
         print('撤回后的消息',original_element.text)
         assert "You recalled a message" in original_element.text
