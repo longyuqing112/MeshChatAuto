@@ -19,12 +19,12 @@ class LoginPage(ElectronPCBase):
         self.wait = WebDriverWait(driver, 10, 0.5)  # 初始化 wait
     #
     #------以下是指securenet的选中企业和Local环境 meshchat没有该功能
-    # def select_firm(self,firm_name):
-    #     self.base_click(COMBOBOX_DROPDOWN1)
-    #     firm_loc = FIRM
-    #     # 等待企业选项可见
-    #     self.base_find_element(firm_loc)
-    #     self.base_click(firm_loc)
+    def select_firm(self,firm_name):
+        self.base_click(COMBOBOX_DROPDOWN1)
+        firm_loc = FIRM
+        # 等待企业选项可见
+        self.base_find_element(firm_loc)
+        self.base_click(firm_loc)
 
     # def select_env(self,env_name):
     #     self.base_click(COMBOBOX_DROPDOWN2)

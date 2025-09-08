@@ -326,6 +326,3 @@ class GroupPage(ElectronPCBase):
 
 
 
-
-
-
